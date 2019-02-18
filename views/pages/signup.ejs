@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Sign Up</title>
+  <% include ../partials/head %>
+  <link rel="stylesheet" type="text/css" 
+    href="/css/login.css">
+  <link rel="stylesheet" type="text/css"
+        href="/css/signup.css">
+  <script>
+    $(document).ready(function() {
+      $(".back-btn").click(function () {
+        window.location.href = "/start"
+      });
+    });
+  </script>
+</head>
+<body style="background: #fff">
+  <div class="login-wrapper">
+      <div class="start-page-holder">
+        <div class="back-btn"></div>
+        <img id="logo" class="logo-top-center" src="/img/icon.png">
+      </div>
+      <div class="form-holder">
+
+        <form enctype="application/x-www-form-urlencoded" method="post" class="signup-form">
+            <div class="login-header">
+              <h3>Sign Up</h3>
+              <h5>To get started, please enter your personal information below.</h5>
+            </div>
+            <div style="font-size: 13.5pt;">
+              <span class="label">First Name:</span>
+              <input class="text" type="text" name="firstname" style="width: 100%;height: 35px;">
+              <span class="label">Height:</span>
+              <input class="text" type="text" name="height" id="height" style="width: 50%;height: 35px;">
+              <span class="label">Weight:</span>
+              <input class="text" type="text" name="weight" style="width: 50%;height: 35px; display:inline-block;"> LBS
+              <br>
+              <span class="label">Age:</span>
+              <input class="text" type="text" name="age" id="age" style="width: 50%;height: 35px;">
+            </div>
+            <br>
+            <input type="submit" value="Next" style="width: 120px;margin-left: 65%;">
+        </form>
+      </div>
+  </div>
+
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+body {
+  background: #2c6547 !important;
+}
+.logo-top-center {
+  position:absolute;
+  top:0;
+  left:50%;
+  transform: translate(-50%, 0%);
+  margin-top: 8px;
+}
+
+.start-page-holder {
+  height: 50px;
+  padding: 8px;
+}
+
+.login-wrapper {
+  background: #2c6547;
+  color: white !important;
+}
+
+.signup-form {
+  width: 70%;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  margin: 0;
+  height: 100%;
+}
+
+input.text {
+  margin-bottom: 10px;
+  display: block;
+  background: #ffffffdd;
+}
+
+.back-btn {
+  background: url(/img/left-arrow-white.png);
+  background-size: 40px 40px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.form-holder {
+  margin-top: 30px;
+  height: calc(100% - 90px);
+}
+
+.label {
+  display: block;
+  margin-bottom: 3px;
+}
+
+input[type="submit"] {
+  position:absolute;
+  bottom: 20px;
+  right: 0;
+}

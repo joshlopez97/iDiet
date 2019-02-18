@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Profile</title>
+  <% include ../partials/head %>
+  <link rel="stylesheet" type="text/css" 
+  href="/css/profile.css">
+</head>
+<body>
+  <% include ../partials/header %>
+  <div style="margin-top: 67px; display: inline-block; width:100%;text-align: center;">
+		<h3 style="margin-bottom: 8px;position:relative;">My Profile</h3>
+    <div class="info-holder">
+      <h4 style="margin-bottom: 8px;">My Information</h4>
+      <div class="entry">
+  		  <div class="key">Name</div>
+  		  <div class="value">John</div>
+      </div>
+      <div class="entry">
+        <div class="key">Height</div>
+        <div class="value">5 ' 10</div>
+      </div>
+      <div class="entry">
+        <div class="key">Weight</div>
+        <div class="value">180 LBS</div>
+      </div>
+      <div class="entry">
+        <div class="key">Age</div>
+        <div class="value">25</div>
+      </div>
+      <div class="entry">
+        <div class="key">Phone Number</div>
+        <div class="value">XXX-XXX-XXXX</div>
+      </div>
+      <div class="entry">
+        <div class="key">Email</div>
+        <div class="value">janedoe@company.com</div>
+      </div>
+  	</div>
+    <div class="info-holder">
+      <h4 style="margin-bottom: 8px;">Change Password</h4>
+      <form method="post">
+        <div class="entry">
+          <div class="key skipline">Current Password</div>
+          <div class="value">
+            <input class="text" type="password" name="current">
+          </div>
+        </div>
+        <div class="entry">
+          <div class="key skipline">New Password</div>
+          <div class="value">
+            <input class="text" type="password" name="new">
+          </div>
+        </div>
+        <div class="entry">
+          <div class="key skipline">Confirm New Password</div>
+          <div class="value">
+            <input class="text" type="password" name="confirmnew">
+          </div>
+        </div>
+      </form>
+    </div>
+
+	</div>
+</body>
+
+</html>

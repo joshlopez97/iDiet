@@ -1,0 +1,38 @@
+.key { 
+    font-weight: 700;
+    width: 35%;
+    float: left;
+    display: inline-block;
+}
+
+.key.skipline {
+	width: 100%;
+	font-weight: normal;
+	padding-left: 2%;
+	margin-bottom: 10px;
+}
+
+.value {
+	float: left;
+    display: inline-block;
+    width: 63%;
+    padding-left: 2%;
+}
+
+.info-holder {
+	background: #fff;
+    padding: 10px;
+    text-align: left;
+    overflow:auto;
+}
+
+.entry {
+	overflow: auto;
+	margin-bottom: 5px;
+}
+
+.tms-detail {
+	display: inline;
+	padding: 0px 5px;
+}
+

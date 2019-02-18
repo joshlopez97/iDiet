@@ -1,0 +1,263 @@
+ /* Table of Contents:
+ ––––––––––––––––––––––––––––––––––––––––––––––––––
+ - Base Style
+ - Error Pages
+ - Navigation Bar
+ - Table
+ */
+
+/* Base Style
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+body {
+  font-family: 'Open Sans', sans-serif;
+  background-color: #f3f3f3;
+}
+a {
+  text-decoration: underline;
+}
+::selection {
+  background: #e1e1e1;
+}
+::-moz-selection {
+  background: #e1e1e1;
+}
+.header {
+  text-align: center;
+  font-weight: 600;
+  font-size: 35px;
+}
+.footer {
+  top: 1000px;
+  float: center;
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  font-size: 11px;
+  font-weight: 600;
+}
+.center-vert {
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+/* Error Pages
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.errorPage {
+  text-align: center;
+  word-wrap: break-word;
+  margin-top: 10em;
+  margin-bottom: 10em;
+}
+/* div containing 'go back to home' button */
+.errorPage .row:last-child {
+  width: 300px; /* match width of button */
+  margin: auto;
+  margin-top: 1em;
+}
+.errorPage a {
+  margin-bottom: 2em;
+}
+
+/* Navigation Bar
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.navbar {
+  padding-top: 5px;
+  background: #2c6547;
+  height: 56px;
+  width: 100%;
+  position: fixed;
+  z-index: 1000;
+}
+.navbar-list {
+  list-style: none;
+  margin-bottom: 0;
+  width: 100%;
+  position: absolute;
+  height: 60px;
+}
+.sidenav-list {
+  list-style: none;
+  position: absolute;
+}
+.navbar-brand {
+  height: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  line-height: 5rem;
+  color: #000033;
+  font-size: 20px;
+  position: relative;
+  margin: 3px 0px 0px 10px;
+  width: 200px;
+  display: inline-block;
+}
+#logo {
+  height: 45px;
+  cursor: pointer;
+}
+/* navbar list items on top right */
+.navbar-holder {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+}
+.navbar-login {
+  float: right;
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+}
+/* navbar list links */
+.navbar-link {
+  font-size: 16px;
+  font-weight: 300;
+  text-decoration: none;
+  line-height: 5rem;
+  color: white;
+}
+
+/* Menu Buttons */
+.navbtn {
+  border-radius: 0;
+  background: transparent;
+  color: white;
+  padding: 10px;
+  font-size: 14pt;
+  border: none;
+  cursor: pointer;
+  height:40px;
+  width:auto;
+  text-align:center;
+}
+.navbtn.nav {
+  line-height: 5px;
+  margin: 7px 60px 0px;
+}
+.navbtn.acct {
+  line-height: 5px;
+  margin: 7px 20px 0px;
+}
+.navbtn.side {
+  font-size: 15pt;
+  line-height: 5px;
+  color: white;
+  float: left;
+  margin: 10px;
+}
+.navbtn:hover {
+  border: none;
+  background: transparent;
+  color: #00944f;
+}
+.navbtn.side:hover {
+  color: #00944f;
+}
+
+.sidebar-mobile-icon-holder {
+  display: none;
+  cursor: pointer;
+  padding: 10px 0px 0px 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ui-menu {
+  text-align: left !important;
+}
+
+/* Pop Up Search Bar
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+ .sidebar {
+  position: fixed;
+  height: 100%;
+  width: 185px;
+  left: -325px; top: 61px;
+  background: #2c6547;
+  color: white;
+  z-index: 1000;
+}
+
+input.text
+{
+  background:white;
+  border:1px solid #ddd;
+  color:#333;
+  font-size: 13.5pt;
+  height: 40px;
+  border-radius: 15px;
+  margin:0;
+  padding:2px 6px;
+}
+
+@media screen and (max-width: 975px) {
+  .navbar-holder {
+/*    visibility: hidden;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 0%;*/
+    display: none;
+  }
+  .navbar-login {
+/*    visibility: hidden;
+    clear: both;
+    float: left;
+    margin: 10px auto 5px 20px;
+    width: 0%;*/
+    display: none;
+  }
+  .navbar-brand {
+    margin-left: 15px;
+  }
+  .navbar-list {
+    text-align: center;
+  }
+  .sidebar-mobile-icon-holder {
+    display: inline-block;
+    z-index: 500;
+    height: 50px;
+    width: 50px;
+  }
+}
+
+/* Mobile sidebar icon animation */
+.icon-wrapper {
+  height: 30px;
+  width: 30px;
+}
+.circle {
+  width:30px;
+  height:30px;
+  position:relative;
+}
+.line {
+  position: absolute;
+  height: 5px;
+  width:100%;
+  background:white;
+  border-radius:4px;
+  transition: all cubic-bezier(0.26, 0.0, 0.27, 0.0) 0.2s;
+}
+.top {
+  top:18%;
+}
+.middle {
+  top:48%;
+}
+.bottom {
+  top:78%;
+}
+.icon.close .top {
+  transform:rotate(45deg);
+  top:48%;
+}
+.icon.close .middle, .icon.close .bottom {
+  transform:rotate(-45deg);
+  top:48%;
+}

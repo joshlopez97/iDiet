@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Log In</title>
+  <% include ../partials/head %>
+  <link rel="stylesheet" type="text/css" 
+    href="/css/login.css">
+</head>
+<body style="background: #fff">
+  <div class="login-wrapper">
+      <div class="start-page-holder">
+        <img class="logo" src="/img/logo.png">
+      </div>
+      <div class="form-holder">
+        <form enctype="application/x-www-form-urlencoded" method="post" class="login-form">
+            <div class="login-header">
+              <h3>Login</h3>
+            </div>
+            <div style="font-size: 13.5pt;">
+                Username:<br>
+                <input class="text" type="text" name="username" style="width: 100%;height: 35px;">
+                <br>
+                <br>
+                Password:<br>
+                <input class="text" type="password" name="password" style="width: 100%;height: 35px;">
+            </div>
+            <br>
+            <input type="submit" value="Log In" style="width: 120px;">
+        </form>
+      </div>
+  </div>
+
+</body>
+
+</html>

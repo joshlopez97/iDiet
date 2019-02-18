@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>iDiet</title>
+  <% include ../partials/head %>
+  <link rel="stylesheet" type="text/css"
+        href="/css/login.css">
+  <link rel="stylesheet" type="text/css"
+        href="/css/start.css">
+  <script type="text/javascript"
+          src="/js/start.js">
+  </script>
+</head>
+<body style="background: #fff">
+<div class="login-wrapper">
+  <div class="start-page-holder back">
+    <img class="logo" src="/img/logo.png">
+    <div class="button-container">
+      <div class="button-holder">
+        <button id="signup-btn" class="centered start-btn" style="width: 40%;">Get Started</button>
+        <p class="centered start-text">
+          Already have an account?<br>
+          <a id="login-btn" class="start-link">Log In</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="form-holder">
+    <div class="back-btn back"></div>
+    <form enctype="application/x-www-form-urlencoded" method="post" class="login-form">
+      <div class="login-header">
+        <h3>Login</h3>
+      </div>
+      <div style="font-size: 13.5pt;">
+        Username:<br>
+        <input class="text" type="text" name="username" style="width: 100%;height: 35px;">
+        <br>
+        <br>
+        Password:<br>
+        <input class="text" type="password" name="password" style="width: 100%;height: 35px;">
+      </div>
+      <br>
+      <input type="submit" value="Log In" style="width: 120px;">
+    </form>
+  </div>
+</div>
+
+</body>
+
+</html>
