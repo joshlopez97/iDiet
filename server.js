@@ -5,8 +5,8 @@ const session = require('express-session');
 const app = express();
 
 // Connecting MYSQL Database
-var mysql = require('mysql');
-var connection = mysql.createConnection({
+const mysql = require('mysql');
+const connection = mysql.createConnection({
   host: 'idiet.cqywkz4otd3h.us-east-2.rds.amazonaws.com',
   user: 'idiet',
   password: '1a2b3c4d5e',
@@ -28,7 +28,7 @@ app.use(express.static('static'));
 app.set('view engine', 'ejs');
 
 // Add modules for parsing forms and url params
-let urlEncodedParser = bodyParser.urlencoded({extended: true});
+const urlEncodedParser = bodyParser.urlencoded({extended: true});
 app.use(urlEncodedParser);
 app.use(bodyParser.json());
 
@@ -43,12 +43,12 @@ app.use('/', router);
 
 // Start the app
 const port = 5000;
-app.listen(port, function () {
-    console.log(`Running on port ${port}`);
+app.listen(port, () => {
+  console.log(`Running on port ${port}`);
 });
 
 // Home Page
-router.get('/', function (req, res) {
+router.get('/', (req, res) => {
   // User is logged in
   if (req.session && req.session.user) {
       res.render('pages/home');
@@ -60,61 +60,50 @@ router.get('/', function (req, res) {
 });
 
 // Start page
-router.get('/start', function(req, res) {
-  return res.render('pages/start')
+router.get('/start', (req, res) => {
+  res.render('pages/start')
 });
-router.post('/start', function(req, res) {
-
+router.post('/start', (req, res) => {
+  req.session.user = {id: req.body.username, password: req.body.password};
   return res.redirect('/');
 });
 
 // Sign up page (Includes INSERT into DB upon Account Creation)
-router.get('/signup', function(req, res) {
-  return res.render('pages/signup');
+router.get('/signup', (req, res) => {
+  res.render('pages/signup')
 });
 
-router.post('/signup', function(req, res) {
-  var username = req.body.username;
-  var password = req.body.password;
-  var firstname = req.body.firstname;
-  var height = req.body.height;
-  var weight = req.body.weight;
-  var age = req.body.age;
+router.post('/signup', (req, res) => {
+  let username = req.body.username,
+      password = req.body.password,
+      firstname = req.body.firstname,
+      height = req.body.height,
+      weight = req.body.weight,
+      age = req.body.age;
 
   // Inserting Post Request
-  var sql= "INSERT into Users(Username, UserPassword, FirstName, Height, Weight, Age) values ('"+username+"',  '"+ password+"', '"+ firstname+"', '"+ height+"', '"+ weight+"', '"+ age+"' )";
-  connection.query(sql,function(err,res){
+  const sql = `INSERT into Users(Username, UserPassword, FirstName, Height, Weight, Age) 
+                values (${username}, ${password}, ${firstname}, ${height}, ${weight}, ${age})`;
+  connection.query(sql, (err) => {
           if(err) throw err;
           console.log(sql);
-  })
+  });
 
-  req.session.user = {id: req.body.username, password: req.body.password};
-
-  return res.redirect('/');
-});
-
-// Login page
-router.get('/login', function(req, res) 
-{
-  return res.render('pages/login');
-});
-router.post('/login', function(req, res) {
-  req.session.user = {id: req.body.username, password: req.body.password};
-
+  req.session.user = {id: username, password: password};
 
   return res.redirect('/');
 });
 
 // Profile Page
-router.get('/profile', function(req, res) {
+router.get('/profile', (req, res) => {
   res.render('pages/profile');
 });
 
 // Logout Current User
-router.get('/logout', function(req, res) {
+router.get('/logout', (req, res) => {
   if (req.session) {
     // delete session object
-    req.session.destroy(function(err) {
+    req.session.destroy(() => {
       res.redirect('/');
     });
   }
