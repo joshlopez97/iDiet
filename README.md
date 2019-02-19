@@ -3,15 +3,15 @@
 iDiet is a mobile web application that prescribes users customizable meal plans based on health goals, dietary preferences/restrictions, and weekly budget for food.
 
 ## MySQL Database Schema
-CREATE TABLE Users (
-    Username varchar(255),
-    UserPassword varchar(255),
-    Email varchar(255),
-    FirstName varchar(255),
-    LastName varchar(255),
-    Height int,
-    Weight int,
-    Age int
+CREATE TABLE Users (  
+    Username varchar(255),  
+    UserPassword varchar(255),  
+    Email varchar(255),  
+    FirstName varchar(255),  
+    LastName varchar(255),  
+    Height int,  
+    Weight int,  
+    Age int  
 );
 
 ## Development
