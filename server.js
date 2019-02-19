@@ -23,6 +23,8 @@ app.use(session({secret: "secret key",
 // Mount the router on the app
 const router = express.Router();
 app.use('/', router);
+
+// Start the app
 const port = 5000;
 app.listen(port, function () {
     console.log(`Running on port ${port}`);
