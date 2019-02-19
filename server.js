@@ -3,6 +3,18 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 
 const app = express();
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: "idiet.cqywkz4otd3h.us-east-2.rds.amazonaws.com",
+  user: "idiet",
+  password: "1a2b3c4d5e"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
 
 // Set static files folder
 app.use(express.static('static'));
