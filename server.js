@@ -4,8 +4,22 @@ const session = require('express-session');
 
 const app = express();
 
-// Creating the MySQL Connection
+// Connecting MYSQL Database
+var mysql = require('mysql');
+var connection = mysql.createConnection({
+  host: 'idiet.cqywkz4otd3h.us-east-2.rds.amazonaws.com',
+  user: 'idiet',
+  password: '1a2b3c4d5e',
+  database: 'idiet'
+});
 
+connection.connect(function(err){
+if(!err) {
+    console.log("Database is connected ... nn");
+} else {
+    console.log("Error connecting database ... nn");
+}
+});
 
 // Set static files folder
 app.use(express.static('static'));
@@ -50,7 +64,7 @@ router.get('/start', function(req, res) {
   return res.render('pages/start')
 });
 router.post('/start', function(req, res) {
-  req.session.user = {id: req.body.username, password: req.body.password};
+
   return res.redirect('/');
 });
 
@@ -58,6 +72,7 @@ router.post('/start', function(req, res) {
 router.get('/signup', function(req, res) {
   return res.render('pages/signup');
 });
+
 router.post('/signup', function(req, res) {
   var username = req.body.username;
   var password = req.body.password;
@@ -66,31 +81,27 @@ router.post('/signup', function(req, res) {
   var weight = req.body.weight;
   var age = req.body.age;
 
-  // Connecting MYSQL Database
-  var mysql = require('mysql');
-  var connection = mysql.createConnection({
-    host: 'idiet.cqywkz4otd3h.us-east-2.rds.amazonaws.com',
-    user: 'idiet',
-    password: '1a2b3c4d5e',
-    database: 'idiet'
-  });
-
   // Inserting Post Request
   var sql= "INSERT into Users(Username, UserPassword, FirstName, Height, Weight, Age) values ('"+username+"',  '"+ password+"', '"+ firstname+"', '"+ height+"', '"+ weight+"', '"+ age+"' )";
-  connection.query(sql,function(err,rows){
+  connection.query(sql,function(err,res){
           if(err) throw err;
-          res.send("Inserted (1)");
+          console.log(sql);
   })
+
+  req.session.user = {id: req.body.username, password: req.body.password};
 
   return res.redirect('/');
 });
 
 // Login page
-router.get('/login', function(req, res) {
+router.get('/login', function(req, res) 
+{
   return res.render('pages/login');
 });
 router.post('/login', function(req, res) {
   req.session.user = {id: req.body.username, password: req.body.password};
+
+
   return res.redirect('/');
 });
 
