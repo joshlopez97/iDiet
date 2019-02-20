@@ -53,8 +53,8 @@
 
   exports.create_user = function(user_info) {
     // Inserting Post Request
-    const sql = `INSERT into Users(Username, UserPassword, FirstName, Height, Weight, Age, Phone, Email, LastName) 
-                values ('${user_info.username}', '${user_info.password}', '${user_info.firstname}', '${user_info.height}', '${user_info.weight}', '${user_info.age}' , '${user_info.phone}', '${user_info.email}', '${user_info.lastname}')`;
+    const sql = `INSERT into Users(Username, UserPassword, FirstName, Height, Weight, Age, LastName, Phone, Email) 
+                values ('${user_info.username}', '${user_info.password}', '${user_info.firstname}', '${user_info.height}', '${user_info.weight}', '${user_info.age}', '${user_info.lastname}', '${user_info.phone}', '${user_info.email}')`;
     console.log(sql);
     connection.query(sql, (err) => {
       if(err) throw err;
