@@ -34,6 +34,7 @@ app.listen(port, () => {
   console.log(`Running on port ${port}`);
 });
 
+
 // Home Page
 router.get('/', (req, res) => {
   // User is logged in
@@ -75,10 +76,14 @@ router.post('/signup', (req, res) => {
   let user_info = {"username" : req.body.username,
                  "password" : req.body.password,
                  "firstname" : req.body.firstname,
+                 "lastname" : req.body.lastname,
                  "height" : req.body.height,
                  "weight" : req.body.weight,
+                 "email" : req.body.email,
+                 "phone" : req.body.phone,
                  "age" : req.body.age};
 
+  info = user_info;
   // Sign up info is valid, create user and sign in
   if (userauth.verify_user_info(user_info)) {
     userauth.create_user(user_info);
@@ -91,10 +96,34 @@ router.post('/signup', (req, res) => {
   }
 });
 
+// Callback function for profile page
+function myFunc(username, password, callback) {
+  const mysql = require('mysql');
+  const connection = mysql.createConnection({
+    host: 'idiet.cqywkz4otd3h.us-east-2.rds.amazonaws.com',
+    user: 'idiet',
+    password: '1a2b3c4d5e',
+    database: 'idiet'
+  });
+
+   connection.query('SELECT * FROM Users WHERE UserName = ?', [username], function (err, result, fields){
+    if (err) throw err;
+    return callback(result);
+  });
+};
+
 // Profile Page
 router.get('/profile', (req, res) => {
-  return res.render('pages/profile');
+
+  // Using callback
+  myFunc(req.session.user.id, req.session.user.password, function(returnVariable)
+  {
+
+    return res.render('pages/profile', {name:returnVariable[0].FirstName, username: returnVariable[0].UserName, lname: returnVariable[0].LastName, height: returnVariable[0].Height, weight: returnVariable[0].Weight, age: returnVariable[0].Age, phone: returnVariable[0].Phone, email: returnVariable[0].Email});
+  });
 });
+
+
 
 // Logout Current User
 router.get('/logout', (req, res) => {
