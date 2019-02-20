@@ -15,9 +15,35 @@
       console.log("Error connecting database ... nn");
     }
   });
-  exports.authenticate = function(username, password) {
+  exports.authenticate = function(username, password, callback) {
     console.log("authenticating");
-    return true;
+    connection.query('SELECT * FROM Users WHERE UserName = ?', [username], function(error, results, fields){
+      if (error)
+      {
+        console.log("error occurred", error);
+      }
+      else
+      {
+        if (results.length > 0)
+        {
+          if (results[0].UserPassword === password)
+          {
+            console.log("Login success");
+            return callback(true);
+          }
+          else
+          {
+            console.log("Wrong credentials");
+            return callback(false);
+          }
+        }
+        else
+        {
+          console.log("User does not exist");
+          return callback(false);
+        }
+      }
+    });
   };
 
   exports.verify_user_info = function(user_info) {

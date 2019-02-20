@@ -53,13 +53,17 @@ router.get('/start', (req, res) => {
 router.post('/start', (req, res) => {
   let username = req.body.username,
       password = req.body.password;
-  if (userauth.authenticate(username, password)) {
-    req.session.user = {id: req.body.username, password: req.body.password};
-    return res.redirect('/');
-  }
-  else {
-    return res.render('pages/start');
-  }
+  userauth.authenticate(username, password, function(loginSuccess){
+    if (loginSuccess)
+    {
+      req.session.user = {id: req.body.username, password: req.body.password};
+      return res.redirect('/');
+    }
+    else
+    {
+      return res.render('pages/start');
+    }
+  });
 });
 
 // Sign up page (Includes INSERT into DB upon Account Creation)
