@@ -66,7 +66,8 @@ a {
   display: inline;
   color: #8c2a2a;
   background: #ffdfdf;
-  padding: 10px 40px;
+  padding: 1% 5%;
+  margin-top:10px;
   border: solid 1px #b37a7a;
   border-radius: 10px;
   position: absolute;
