@@ -11,9 +11,9 @@ CREATE TABLE Users (
     LastName varchar(255),  
     Height int,  
     Weight int,  
-    Age int,
-    Phone varchar(255),
-    Email varchar(255)
+    Age int,  
+    Phone varchar(255),  
+    Email varchar(255)  
 );
 
 ## Development
