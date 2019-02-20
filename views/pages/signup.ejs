@@ -13,6 +13,40 @@
       $(".back-btn").click(function () {
         window.location.href = "/start"
       });
+      $("#height").on("input", function() {
+        let value = $(this).val(),
+            lastValue = $(this).data("lastVal"),
+            heightRegex = /^([1-9]) ?'? ?([0-9]| ?1[01])$/g
+
+        // Allow user to backspace without autoformatting
+        if (lastValue && lastValue.length > value.length)
+        {
+          $(this).data("lastVal", $(this).val());
+        }
+        // Change "5" to "5 '" automatically
+        else if (value.match(/^[1-9] *$/))
+        {
+          $(this).val(value.charAt(0) + ' \' ');
+          $(this).data("lastVal", $(this).val());
+        }
+        // Changes "62", "6 2", "6'2", ... all to "6 ' 2"
+        else if (value.match(heightRegex))
+        {
+          let matches = heightRegex.exec(value),
+              feet    = matches[1],
+              inches  = matches[2];
+          $(this).val(feet + ' \' ' + inches);
+          $(this).data("lastVal", $(this).val());
+        }
+        // Revert to last recorded value if input is invalid
+        else
+        {
+          if (lastValue)
+            $(this).val(lastValue);
+          else
+            $(this).val("");
+        }
+      });
     });
   </script>
 </head>
@@ -40,12 +74,12 @@
               <span class="label">First Name:</span>
               <input class="text" type="text" name="firstname" style="width: 100%;height: 35px;">
               <span class="label">Height:</span>
-              <input class="text" type="text" name="height" id="height" style="width: 50%;height: 35px;">
+              <input class="text" type="tel" pattern="[0-9]*" name="height" id="height" style="width: 50%;height: 35px;" novalidate>
               <span class="label">Weight:</span>
-              <input class="text" type="text" name="weight" style="width: 50%;height: 35px; display:inline-block;"> LBS
+              <input class="text" type="tel" pattern="[0-9]*" name="weight" style="width: 50%;height: 35px; display:inline-block;"> LBS
               <br>
               <span class="label">Age:</span>
-              <input class="text" type="text" name="age" id="age" style="width: 50%;height: 35px;">
+              <input class="text" type="tel" pattern="[0-9]*"  name="age" id="age" style="width: 50%;height: 35px;">
             </div>
             <br>
             <input type="submit" value="Next" style="width: 120px;">
