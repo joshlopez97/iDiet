@@ -48,7 +48,7 @@ router.get('/', (req, res) => {
 
 // Start page
 router.get('/start', (req, res) => {
-  return res.render('pages/start', {'action':req.query.action});
+  return res.render('pages/start', {'action':req.query.action, 'error':req.query.error});
 });
 router.post('/start', (req, res) => {
   let username = req.body.username,
@@ -61,7 +61,7 @@ router.post('/start', (req, res) => {
     }
     else
     {
-      return res.render('pages/start', {"error": true});
+      return res.redirect('/start?action=login&error=1');
     }
   });
 });

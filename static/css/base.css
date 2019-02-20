@@ -62,6 +62,18 @@ a {
   margin-bottom: 2em;
 }
 
+.errorMsg {
+  display: inline;
+  color: #8c2a2a;
+  background: #ffdfdf;
+  padding: 10px 40px;
+  border: solid 1px #b37a7a;
+  border-radius: 10px;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0%);
+}
+
 /* Navigation Bar
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .navbar {
