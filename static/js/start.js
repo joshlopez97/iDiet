@@ -1,12 +1,17 @@
 function onLoad()
 {
-  $(".logo").animate({"top": "35%"}, 600);
-  $(".button-container").fadeIn(700);
-  attachEventListeners();
+  let action = $("#action").val();
+  console.log(action);
+  if (action !== "login") {
+    $(".logo").animate({"top": "35%"}, 600);
+    $(".button-container").fadeIn(700);
+  }
+  attachEventListeners(action);
 }
 
-function attachEventListeners()
+function attachEventListeners(action)
 {
+  console.log("attaching event listeners");
   // Display login page
   $("#login-btn").click(showLogin);
 
@@ -14,10 +19,15 @@ function attachEventListeners()
   $("#signup-btn").click(function(){
     window.location.href = "/signup";
   });
+  if (action === 'login')
+  {
+    $(".back").click(hideLogin);
+  }
 }
 
 function showLogin()
 {
+  console.log("show login");
   $("#login-btn").unbind("click");
   $(".button-container").fadeOut(500);
   $(".logo").animate({"top": "50%"}, 600);
@@ -30,6 +40,7 @@ function showLogin()
 
 function hideLogin()
 {
+  console.log("hide login");
   $(".back").unbind("click");
   $(".button-container").fadeIn(500);
   $(".logo").animate({"top": "35%"}, 600);

@@ -14,9 +14,9 @@
 </head>
 <body style="background: #fff">
 <div class="login-wrapper">
-  <div class="start-page-holder back">
-    <img class="logo" src="/img/logo.png">
-    <div class="button-container">
+  <div class="start-page-holder" style="<%=locals.action? 'height:30%':'' %>">
+    <img class="logo" src="/img/logo.png" style="<%=locals.action? 'top:50%':'' %>">
+    <div class="button-container" style="<%=locals.action? 'display:none':'' %>">
       <div class="button-holder">
         <button id="signup-btn" class="centered start-btn">Get Started</button>
         <p class="centered start-text">
@@ -42,6 +42,7 @@
       </div>
       <br>
       <input type="submit" value="Log In" style="width: 120px;">
+      <input name="action" id="action" type="hidden" value="<%- action %>">
     </form>
   </div>
 </div>

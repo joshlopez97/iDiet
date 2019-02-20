@@ -32,6 +32,7 @@
   margin:0;
 }
 .back-btn {
+  cursor: pointer;
   background: url(/img/left-arrow-green.png);
   background-size: 35px 35px;
   width: 50px;
