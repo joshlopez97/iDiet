@@ -63,16 +63,18 @@ a {
 }
 
 .errorMsg {
-  display: inline;
   color: #8c2a2a;
   background: #ffdfdf;
   padding: 1% 5%;
-  margin-top:10px;
   border: solid 1px #b37a7a;
   border-radius: 10px;
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0%);
+  top: 2%;
+  width: 65%;
+  max-width: 240px;
+  text-align: center;
 }
 
 /* Navigation Bar

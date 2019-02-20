@@ -28,6 +28,7 @@ function attachEventListeners(action)
 function showLogin()
 {
   console.log("show login");
+  $(".errorMsg").css("display", "none");
   $("#login-btn").unbind("click");
   $(".button-container").fadeOut(500);
   $(".logo").animate({"top": "50%"}, 600);
