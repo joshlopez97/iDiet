@@ -24,6 +24,7 @@
 .start-btn {
   text-transform: none;
   background: #4c9c72;
+  width: 200px;
 }
 
 .start-btn:hover, .start-btn:active, .start-btn:visited, .start-btn:focus, .start-btn:focus-within {
