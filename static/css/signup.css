@@ -32,10 +32,8 @@ input.text {
 }
 
 .back-btn {
-  background: url(/img/left-arrow-white.png);
   background-size: 40px 40px;
-  background-repeat: no-repeat;
-  background-position: center;
+  background: url(/img/left-arrow-white.png) no-repeat center;
 }
 
 .form-holder {
