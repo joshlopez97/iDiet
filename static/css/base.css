@@ -44,23 +44,8 @@ a {
   transform: translateY(-50%);
 }
 
-/* Error Pages
+/* Error Messages
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
-.errorPage {
-  text-align: center;
-  word-wrap: break-word;
-  margin-top: 10em;
-  margin-bottom: 10em;
-}
-/* div containing 'go back to home' button */
-.errorPage .row:last-child {
-  width: 300px; /* match width of button */
-  margin: 1em auto auto;
-}
-.errorPage a {
-  margin-bottom: 2em;
-}
-
 .errorBox {
   color: #8c2a2a;
   background: #ffdfdf;
@@ -120,18 +105,7 @@ a {
   height: 45px;
   cursor: pointer;
 }
-/* navbar list items on top right */
-.navbar-holder {
-  position: relative;
-  display: inline-block;
-  vertical-align: top;
-}
-.navbar-login {
-  float: right;
-  position: relative;
-  display: inline-block;
-  vertical-align: top;
-}
+
 /* navbar list links */
 .navbar-link {
   font-size: 16px;
@@ -146,36 +120,19 @@ a {
   border-radius: 0;
   background: transparent;
   color: white;
-  padding: 10px;
-  font-size: 14pt;
+  padding: 0 10px;
+  font-size: 15pt;
   border: none;
   cursor: pointer;
-  height:40px;
+  height:unset;
   width:auto;
   text-align:center;
-}
-.navbtn.nav {
-  line-height: 5px;
-  margin: 7px 60px 0px;
-}
-.navbtn.acct {
-  line-height: 5px;
-  margin: 7px 20px 0px;
-}
-.navbtn.side {
-  font-size: 15pt;
-  line-height: 5px;
-  color: white;
-  float: left;
-  margin: 10px;
+  margin: 5px 10px;
 }
 .navbtn:hover {
-  border: none;
+  margin-bottom: 2px;
+  border-bottom: 3px solid #73f287;
   background: transparent;
-  color: #00944f;
-}
-.navbtn.side:hover {
-  color: #00944f;
 }
 
 .sidebar-mobile-icon-holder {
@@ -218,6 +175,14 @@ a {
   z-index: 500;
   height: 50px;
   width: 50px;
+}
+div.unfocused {
+  display:none;
+  background: #0000004a;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: -10;
 }
 
 /* Mobile sidebar icon animation */

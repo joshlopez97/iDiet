@@ -4,9 +4,8 @@ $(document).ready(function() {
   $(".sidebar-mobile-icon-holder").click(displaySidebar);
 
   /* Hide sidebar when user clicks away */
-  $("body").click(function(e){
-    if (!$(e.target).hasClass('side'))
-      hideSidebar();
+  $("div.unfocused").click(function(e){
+    hideSidebar();
   });
   $(".navbar, .navbar-list, .side, .navbtn, div.side.sidebar").click(function(e){e.stopPropagation();});
 });
