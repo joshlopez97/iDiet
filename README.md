@@ -24,7 +24,8 @@ Currently, this is the generic schema for iDiet accounts:
 - Age: User's age (will be replaced with date of birth)
 - Allergies: String containing comma separated list of allergies to avoid in diet plan
 
-```CREATE TABLE Account (
+```
+CREATE TABLE Account (
   Email varchar(255) UNIQUE NOT NULL,
   UserPassword varchar(255) NOT NULL,
   FirstName varchar(255) NOT NULL,
