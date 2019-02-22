@@ -88,15 +88,19 @@
       }
     }
 
-    user_info.height = convert_to_inches(user_info.height);
-
     return problems;
   };
 
   exports.create_user = function(user_info) {
+
+    // Convert numerical values to ints
+    const height = user_info.height = convert_to_inches(user_info.height),
+          age    = parseInt(user_info.age),
+          weight = parseInt(user_info.weight);
+
     // Inserting Post Request
     const sql = `INSERT into Account(Email, UserPassword, FirstName, Height, Weight, Age, Allergies) 
-                values ('${user_info.email}', '${user_info.password}', '${user_info.firstname}', ${user_info.height}, ${user_info.weight}, ${user_info.age}, NULL)`;
+                values ('${user_info.email}', '${user_info.password}', '${user_info.firstname}', ${height}, ${weight}, ${age}, NULL)`;
     console.log(sql);
     connection.query(sql, (err) => {
       if(err) throw err;

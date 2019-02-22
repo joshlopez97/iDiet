@@ -79,6 +79,7 @@ router.post('/signup', (req, res) => {
                  "height" : req.body.height,
                  "weight" : req.body.weight,
                  "age" : req.body.age};
+  const values = Object.assign({}, user_info);
   console.log(user_info);
 
   // Verify Sign Up Info
@@ -93,7 +94,7 @@ router.post('/signup', (req, res) => {
   }
   // Sign up info invalid, display error on signup page
   else {
-    return res.render('pages/signup', data={"problems":problems});
+    return res.render('pages/signup', data={"problems":problems, "values":user_info});
   }
 });
 

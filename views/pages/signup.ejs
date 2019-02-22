@@ -28,42 +28,48 @@
             <div class="fields">
               <div class="form-field<%-(locals.problems && problems.includes('email'))? ' err-field':''%>">
                 <span class="label">Email:</span>
-                <input name="email" class="text" type="text" maxlength="40">
+                <input name="email" id="email" class="text" type="text" maxlength="40"
+                       value="<%-locals.values?values.email:''%>">
                 <% if (locals.problems && problems.includes('email')) { %>
                   <span class="errorMsg">Please enter a valid email address.</span>
                 <% } %>
               </div>
               <div class="form-field<%-(locals.problems && problems.includes('password'))? ' err-field':''%>">
                 <span class="label">Password:</span>
-                <input name="password" class="text" type="password" maxlength="30">
+                <input name="password" id="password" class="text" type="password" maxlength="30"
+                       value="<%-locals.values?values.password:''%>">
                 <% if (locals.problems && problems.includes('password')) { %>
                   <span class="errorMsg">Please enter a password.</span>
                 <% } %>
               </div>
               <div class="form-field<%-(locals.problems && problems.includes('firstname'))? ' err-field':''%>">
                 <span class="label">First Name:</span>
-                <input name="firstname" class="text" type="text" maxlength="30">
+                <input name="firstname" id="firstname" class="text" type="text" maxlength="30"
+                       value="<%-locals.values?values.firstname:''%>">
                 <% if (locals.problems && problems.includes('firstname')) { %>
                   <span class="errorMsg">Please enter a valid first name.</span>
                 <% } %>
               </div>
               <div class="form-field<%-(locals.problems && problems.includes('height'))? ' err-field':''%>">
                 <span class="label">Height:</span>
-                <input name="height" id="height" class="text short" type="tel" maxlength="5">
+                <input name="height" id="height" class="text short" type="tel" maxlength="6"
+                       value="<%-locals.values?values.height:''%>">
                 <% if (locals.problems && problems.includes('height')) { %>
                   <span class="errorMsg">Please enter a valid height.</span>
                 <% } %>
               </div>
               <div class="form-field<%-(locals.problems && problems.includes('weight'))? ' err-field':''%>">
                 <span class="label">Weight:</span>
-                <input name="weight" class="text short" type="tel" style="display:inline-block;" maxlength="4"> LBS
+                <input name="weight" id="weight" class="text short" type="tel" style="display:inline-block;" maxlength="4"
+                       value="<%-locals.values?values.weight:''%>"> LBS
                 <% if (locals.problems && problems.includes('weight')) { %>
                   <span class="errorMsg">Please enter a valid weight.</span>
                 <% } %>
               </div>
               <div class="form-field<%-(locals.problems && problems.includes('age'))? ' err-field':''%>">
                 <span class="label">Age:</span>
-                <input name="age" id="age" class="text short" type="number" maxlength="3">
+                <input name="age" id="age" class="text short" type="number" maxlength="3"
+                       value="<%-locals.values?values.age:''%>">
                 <% if (locals.problems && problems.includes('age')) { %>
                   <span class="errorMsg">Please enter a valid age.</span>
                 <% } %>
