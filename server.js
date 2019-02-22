@@ -3,8 +3,25 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
+// Connecting MYSQL Database
+const mysql = require('mysql');
+const connection = mysql.createConnection({
+  host: 'idiet.cqywkz4otd3h.us-east-2.rds.amazonaws.com',
+  user: 'idiet',
+  password: '1a2b3c4d5e',
+  database: 'idiet'
+});
+connection.connect(function(err){
+  if(!err) {
+    console.log("Database is connected");
+  } else {
+    console.log("Error connecting database");
+  }
+});
+
 // iDiet node modules
-const userauth = require('./user/auth.js');
+const accountModule = require('./user/account.js'),
+      account = accountModule.create({"connection":connection});
 
 const app = express();
 
@@ -55,7 +72,7 @@ router.get('/start', (req, res) => {
 router.post('/start', (req, res) => {
   let username = req.body.username,
       password = req.body.password;
-  userauth.authenticate(username, password, function(loginSuccess){
+  account.authenticate(username, password, function(loginSuccess){
     if (loginSuccess)
     {
       req.session.user = {id: req.body.username, password: req.body.password};
@@ -84,12 +101,12 @@ router.post('/signup', (req, res) => {
   console.log(user_info);
 
   // Verify Sign Up Info
-  const problems = userauth.verify_user_info(user_info);
+  const problems = account.verify_user_info(user_info);
   console.log(problems);
 
   // If no problems found with Sign Up Info, proceed to create user and sign in
   if (problems.length === 0) {
-    userauth.create_user(user_info);
+    account.create_user(user_info);
     req.session.user = {id: user_info.email, password: user_info.password, "firstname": user_info.firstname};
     return res.redirect('/personalize');
   }

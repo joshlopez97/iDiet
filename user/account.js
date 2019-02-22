@@ -1,24 +1,26 @@
 (function() {
-  // Connecting MYSQL Database
-  const mysql = require('mysql');
-  const connection = mysql.createConnection({
-    host: 'idiet.cqywkz4otd3h.us-east-2.rds.amazonaws.com',
-    user: 'idiet',
-    password: '1a2b3c4d5e',
-    database: 'idiet'
-  });
 
-  connection.connect(function(err){
-    if(!err) {
-      console.log("Database is connected");
-    } else {
-      console.log("Error connecting database");
+  function Account(options) {
+    this.options = options;
+  }
+
+  function convert_to_inches(height_string) {
+    console.log(height_string);
+    try {
+      const heightRegex = /^([1-9]) ' ([0-9]|1[01])$/;
+      const matches = heightRegex.exec(height_string),
+        feet = parseInt(matches[1]),
+        inches = parseInt(matches[2]);
+      return (feet * 12) + inches;
     }
-  });
+    catch (exception) {
+      return 0;
+    }
+  }
 
-  exports.authenticate = function(email, password, callback) {
+  Account.prototype.authenticate = function(email, password, callback) {
     console.log(`Authenticating ${email}`);
-    connection.query(`SELECT * FROM Account WHERE Email = ?`, [email], function(error, results, fields){
+    this.options.connection.query(`SELECT * FROM Account WHERE Email = ?`, [email], function(error, results, fields){
       if (error)
       {
         console.log("Error occurred:\n", error);
@@ -47,20 +49,6 @@
     });
   };
 
-  function convert_to_inches(height_string) {
-    console.log(height_string);
-    try {
-      const heightRegex = /^([1-9]) ' ([0-9]|1[01])$/;
-      const matches = heightRegex.exec(height_string),
-        feet = parseInt(matches[1]),
-        inches = parseInt(matches[2]);
-      return (feet * 12) + inches;
-    }
-    catch (exception) {
-      return 0;
-    }
-  }
-
   /**
    *  Verifies user_info and returns list of problems found (if any).
    *
@@ -69,7 +57,7 @@
    *  expressions stored in the `validators` dictionary. If the input is
    *  valid, an empty list is returned.
    */
-  exports.verify_user_info = function(user_info) {
+  Account.prototype.verify_user_info = function(user_info) {
     const validators = {
       "email":/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/i,
       "password":/.+/,
@@ -91,7 +79,7 @@
     return problems;
   };
 
-  exports.create_user = function(user_info) {
+  Account.prototype.create_user = function(user_info) {
 
     // Convert numerical values to ints
     const height = user_info.height = convert_to_inches(user_info.height),
@@ -102,10 +90,14 @@
     const sql = `INSERT into Account(Email, UserPassword, FirstName, Height, Weight, Age, Allergies) 
                 values ('${user_info.email}', '${user_info.password}', '${user_info.firstname}', ${height}, ${weight}, ${age}, NULL)`;
     console.log(sql);
-    connection.query(sql, (err) => {
+    this.options.connection.query(sql, (err) => {
       if(err) throw err;
       console.log(sql);
     });
+  };
+
+  exports.create = function(options) {
+    return new Account(options);
   };
 
 }());
