@@ -3,7 +3,6 @@ function onLoad()
   let action = $("#action").val();
   console.log(action);
   if (action !== "login") {
-    $(".logo").animate({"top": "35%"}, 600);
     $(".button-container").fadeIn(700);
   }
   attachEventListeners(action);
@@ -27,43 +26,53 @@ function attachEventListeners(action)
 
 function showLogin()
 {
-  console.log("show login");
+  let fh  = $(".form-holder"),
+      logo = $(".logo");
+  if (!fh.hasClass("shrink")) {
+    console.log("show login");
 
-  // Clear error messages
-  $(".errorBox").css("display", "none");
+    // Clear error messages
+    $(".errorBox").css("display", "none");
 
-  // Remove and disable buttons on Start screen
-  $("#login-btn").unbind("click");
-  $(".button-container").fadeOut(500);
+    // Remove and disable buttons on Start screen
+    $("#login-btn").unbind("click");
+    $(".button-container").fadeOut(500);
 
-  // Reveal login screen
-  $(".logo").animate({"top": "50%"}, 600);
-  $(".form-holder").css("display", "block");
-  $(".start-page-holder").animate({"height": "30%"},
-    600,
-    function(){
-      $(".back").click(hideLogin);
-    });
+    // Reveal login screen
+    logo.removeClass("login-close");
+    logo.addClass("login-open");
+
+    fh.css('display', 'block');
+    fh.removeClass("inactive");
+    fh.addClass("active");
+    $(".back").click(hideLogin);
+  }
 }
 
 function hideLogin()
 {
-  console.log("hide login");
+  let fh  = $(".form-holder"),
+      logo = $(".logo");
+  if (!fh.hasClass("grow")) {
+    console.log("hide login");
 
-  // Disable back button on Login screen
-  $(".back").unbind("click");
+    // Disable back button on Login screen
+    $(".back").unbind("click");
 
-  // Reveal Start screen buttons
-  $(".button-container").fadeIn(500);
+    // Reveal Start screen buttons
+    $(".button-container").fadeIn(500);
 
-  // Hide login screen
-  $(".logo").animate({"top": "35%"}, 600);
-  $(".form-holder").css("display", "block");
-  $(".start-page-holder").animate({"height": "100%"},
-    600,
-    function(){
-      $("#login-btn").click(showLogin);
-    });
+    // Hide login screen
+    logo.removeClass("login-open");
+    logo.addClass("login-close");
+    setTimeout(function() {
+      fh.css('display', 'none');
+    }, 700);
+
+    fh.removeClass("active");
+    fh.addClass("inactive");
+    $("#login-btn").click(showLogin);
+  }
 
 }
 

@@ -1,3 +1,94 @@
+/* Start page wrappers */
+.start-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.start-page-holder {
+  padding: 0 10%;
+  background: #2c6547;
+  height: 100%;
+  position: relative;
+}
+.form-holder {
+  display:none;
+  background: #fff;
+}
+.form-holder.login {
+  display:block;
+}
+.form-holder.active {
+  display:block;
+  animation: moveup 0.7s linear forwards;
+}
+.form-holder.inactive {
+  display:block;
+  animation: movedown 0.7s linear forwards;
+}
+@keyframes moveup {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+@keyframes movedown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+
+/* Start page logo in center */
+.logo {
+  position: absolute;
+  width: 80%;
+  max-width: 400px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: logo-reveal 0.7s linear forwards;
+  animation-delay: 0.7s;
+}
+
+/* Start page logo animation onload */
+@keyframes logo-reveal {
+  from {transform: translate(-50%, -50%);}
+  to {transform: translate(-50%, -120%);}
+}
+
+/* Logo animation when login form opens */
+.logo.login-open {
+  animation: logo-min 0.7s linear forwards;
+}
+@keyframes logo-min {
+  from {
+    transform: translate(-50%, -120%);
+  }
+  to {
+    transform: translate(-50%, -200%) scale(0.8);
+  }
+}
+
+/* Logo animation when login form closes */
+.logo.login-close {
+  animation: logo-max 0.7s linear forwards;
+}
+@keyframes logo-max {
+  from {
+    transform: translate(-50%, -200%) scale(0.8);
+  }
+  to {
+    transform: translate(-50%, -120%);
+  }
+}
+
+/* Buttons and links underneath logo */
 .button-container {
   position: absolute;
   width: 100%;
@@ -7,48 +98,49 @@
   transform: translate(-50%, 0%);
   display:none;
 }
-
 .button-holder {
   position: relative;
   width: 100%;
   height: 100%;
 }
-
 .centered {
   display: block;
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0%);
 }
-
 .start-btn {
   text-transform: none;
   background: #4c9c72;
   width: 200px;
 }
-
 .start-btn:hover, .start-btn:active, .start-btn:visited, .start-btn:focus, .start-btn:focus-within {
   background:#488e69;
 }
-
 .start-text {
   top:30%;
   color: white;
   text-align: center;
 }
-
 .start-link, .start-link:hover {
   color: #73f287;
   cursor: pointer;
 }
 
-.start-link {
-
+/* Slide up login form */
+.login-form {
+  width: 70%;
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  margin:0;
 }
-
-.start-page-holder {
-  padding: 0 10%;
-  background: #2c6547;
-  height: 100%;
-  position: relative;
+.back-btn {
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  margin: 5px;
+  background: url(/img/left-arrow-green.png) no-repeat center;
+  background-size: 35px 35px;
 }

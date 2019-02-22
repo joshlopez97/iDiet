@@ -1,10 +1,9 @@
- /* Table of Contents:
- ––––––––––––––––––––––––––––––––––––––––––––––––––
- - Base Style
- - Error Pages
- - Navigation Bar
- - Table
- */
+/* Table of Contents:
+––––––––––––––––––––––––––––––––––––––––––––––––––
+- Base Style
+- Navigation Bar
+- Table
+*/
 
 /* Base Style
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -12,60 +11,23 @@ body {
   font-family: 'Open Sans', sans-serif;
   background-color: #f3f3f3;
 }
+
 a {
   text-decoration: underline;
 }
+
 ::selection {
   background: #e1e1e1;
 }
+
 ::-moz-selection {
   background: #e1e1e1;
 }
+
 .header {
   text-align: center;
   font-weight: 600;
   font-size: 35px;
-}
-.footer {
-  top: 1000px;
-  float: center;
-  position: absolute;
-  margin-left: auto;
-  margin-right: auto;
-  left: 0;
-  right: 0;
-  font-size: 11px;
-  font-weight: 600;
-}
-.center-vert {
-  position: absolute;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
-
-/* Error Messages
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-.errorBox {
-  color: #8c2a2a;
-  background: #ffdfdf;
-  padding: 1% 5%;
-  border: solid 1px #b37a7a;
-  border-radius: 10px;
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0%);
-  top: 2%;
-  width: 65%;
-  max-width: 240px;
-  text-align: center;
-}
-
-.errorMsg {
-  display: block;
-  color: #ff6363;
-  padding: 0 6px;
-  font-size: 11pt;
 }
 
 /* Navigation Bar
@@ -78,6 +40,7 @@ a {
   position: fixed;
   z-index: 1000;
 }
+
 .navbar-list {
   list-style: none;
   margin-bottom: 0;
@@ -85,10 +48,12 @@ a {
   position: absolute;
   height: 60px;
 }
+
 .sidenav-list {
   list-style: none;
   position: absolute;
 }
+
 .navbar-brand {
   height: 50px;
   font-weight: 600;
@@ -101,6 +66,7 @@ a {
   width: 200px;
   display: inline-block;
 }
+
 #logo {
   height: 45px;
   cursor: pointer;
@@ -124,11 +90,12 @@ a {
   font-size: 15pt;
   border: none;
   cursor: pointer;
-  height:unset;
-  width:auto;
-  text-align:center;
+  height: unset;
+  width: unset;
+  text-align: center;
   margin: 5px 10px;
 }
+
 .navbtn:hover {
   margin-bottom: 2px;
   border-bottom: 3px solid #73f287;
@@ -144,40 +111,34 @@ a {
   left: 0;
 }
 
-.ui-menu {
-  text-align: left !important;
-}
-
 .sidebar {
   position: fixed;
   height: 100%;
   width: 185px;
-  left: -325px; top: 61px;
+  left: -325px;
+  top: 61px;
   background: #2c6547;
   color: white;
   z-index: 1000;
 }
 
-.navbar-holder {
-  display: none;
-}
-.navbar-login {
-  display: none;
-}
 .navbar-brand {
   margin-left: 15px;
 }
+
 .navbar-list {
   text-align: center;
 }
+
 .sidebar-mobile-icon-holder {
   display: inline-block;
   z-index: 500;
   height: 50px;
   width: 50px;
 }
+
 div.unfocused {
-  display:none;
+  display: none;
   background: #0000004a;
   height: 100%;
   width: 100%;
@@ -185,61 +146,101 @@ div.unfocused {
   z-index: -10;
 }
 
-/* Mobile sidebar icon animation */
+/* Sidebar Icon Animation
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
 .icon-wrapper {
   height: 30px;
   width: 30px;
 }
+
 .circle {
-  width:30px;
-  height:30px;
-  position:relative;
+  width: 30px;
+  height: 30px;
+  position: relative;
 }
+
 .line {
   position: absolute;
   height: 5px;
-  width:100%;
-  background:white;
-  border-radius:4px;
+  width: 100%;
+  background: white;
+  border-radius: 4px;
   transition: all cubic-bezier(0.26, 0.0, 0.27, 0.0) 0.2s;
 }
+
 .top {
-  top:18%;
-}
-.middle {
-  top:48%;
-}
-.bottom {
-  top:78%;
-}
-.icon.close .top {
-  transform:rotate(45deg);
-  top:48%;
-}
-.icon.close .middle, .icon.close .bottom {
-  transform:rotate(-45deg);
-  top:48%;
+  top: 18%;
 }
 
-/* Forms */
+.middle {
+  top: 48%;
+}
+
+.bottom {
+  top: 78%;
+}
+
+.icon.close .top {
+  transform: rotate(45deg);
+  top: 48%;
+}
+
+.icon.close .middle, .icon.close .bottom {
+  transform: rotate(-45deg);
+  top: 48%;
+}
+
+/* Forms
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.form-holder {
+  height: 60%;
+  position: relative;
+}
+
 input.text {
-   background:white;
-   border:1px solid #ddd;
-   color:#333;
-   font-size: 13.5pt;
-   height: 35px;
-   border-radius: 15px;
-   margin:0;
-   padding:2px 6px;
-   width: 100%;
- }
+  background: white;
+  border: 1px solid #ddd;
+  color: #333;
+  font-size: 13.5pt;
+  height: 35px;
+  border-radius: 15px;
+  margin: 0;
+  padding: 2px 6px;
+  width: 100%;
+}
+
 input.text.short {
-   width: 50%;
- }
+  width: 50%;
+}
+
 div.form-field {
   margin-bottom: 15px;
 }
+
 div.form-field.err-field {
   margin-bottom: 0;
 }
 
+/* Form Error Messages
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.errorBox {
+  color: #8c2a2a;
+  background: #ffdfdf;
+  padding: 1% 5%;
+  border: solid 1px #b37a7a;
+  border-radius: 10px;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  top: 2%;
+  width: 65%;
+  max-width: 240px;
+  text-align: center;
+}
+
+.errorMsg {
+  display: block;
+  color: #ff6363;
+  padding: 0 6px;
+  font-size: 11pt;
+}
