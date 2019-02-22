@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Personalize your plan</title>
+  <% include ../partials/head %>
+  <link rel="stylesheet" type="text/css" 
+    href="/css/login.css">
+  <link rel="stylesheet" type="text/css"
+        href="/css/signup.css">
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $(".back-btn").click(function () {
+        window.location.href = "/signup"
+      });
+      $("#budget").on("input", function(){
+        const value = $(this).val(),
+          lastValue = $(this).data("lastVal");
+
+        // Allow user to backspace without autoformatting
+        if (lastValue && lastValue.length > value.length)
+        {
+          $(this).data("lastVal", $(this).val());
+          return;
+        }
+
+        const moneyRegex = /^\$?([0-9]+\.?[0-9]{0,2})$/;
+
+        // Change "5" to "5 '" automatically
+        if (value.match(/^[0-9]+$/))
+        {
+          $(this).val("$"+value);
+        }
+        // Changes "62", "6 2", "6'2", ... all to "6 ' 2"
+        else if (value.match(moneyRegex))
+        {
+          $(this).val("$"+moneyRegex.exec(value)[1]);
+        }
+        // Revert to last recorded value if input is invalid
+        else
+        {
+          $(this).val(lastValue? lastValue : "");
+        }
+        $(this).data("lastVal", $(this).val());
+      });
+
+      $("#budget").change(function(){
+        const moneyRegex = /^\$?([0-9]+\.?[0-9]{0,2})$/,
+              value      = $(this).val();
+        if (value.match(moneyRegex)) {
+          $(this).val("$" + Number.parseFloat(moneyRegex.exec(value)[1]).toFixed(2))
+        }
+      });
+    });
+  </script>
+</head>
+<body style="background: #fff">
+  <div class="start-wrapper">
+      <div class="start-page-holder">
+        <div class="back-btn"></div>
+        <img id="logo" class="logo-top-center" src="/img/icon.png">
+      </div>
+      <div class="form-holder">
+
+        <form enctype="application/x-www-form-urlencoded" method="post" class="signup-form">
+            <div class="login-header">
+              <h3>Personalize your plan</h3>
+              <h5>Now let's create a plan that best fits your needs.</h5>
+            </div>
+            <div class="fields">
+              <div class="form-field<%-(locals.problems && problems.includes('goalweight'))? ' err-field':''%>">
+                <span class="label">Goal Weight:</span>
+                <input name="goalweight" id="goalweight" class="text short" type="tel" style="display:inline-block;" maxlength="4"
+                       value="<%-locals.values?values.goalweight:''%>">  LBS
+                <% if (locals.problems && problems.includes('goalweight')) { %>
+                  <span class="errorMsg">Please enter a valid weight.</span>
+                <% } %>
+              </div>
+              <div class="form-field<%-(locals.problems && problems.includes('budget'))? ' err-field':''%>">
+                <span class="label">Weekly Budget for food:</span>
+                <input name="budget" id="budget" class="text short" type="tel"
+                       value="<%-locals.values?values.budget:''%>"
+                       placeholder="$">
+                <% if (locals.problems && problems.includes('budget')) { %>
+                  <span class="errorMsg">Please enter a valid budget.</span>
+                <% } %>
+              </div>
+
+            </div>
+            <br>
+            <input type="submit" value="Next" style="width: 120px;">
+        </form>
+      </div>
+  </div>
+
+</body>
+
+</html>

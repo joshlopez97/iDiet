@@ -68,7 +68,7 @@
               </div>
               <div class="form-field<%-(locals.problems && problems.includes('age'))? ' err-field':''%>">
                 <span class="label">Age:</span>
-                <input name="age" id="age" class="text short" type="number" maxlength="3"
+                <input name="age" id="age" class="text short" type="tel" maxlength="3"
                        value="<%-locals.values?values.age:''%>">
                 <% if (locals.problems && problems.includes('age')) { %>
                   <span class="errorMsg">Please enter a valid age.</span>

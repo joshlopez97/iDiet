@@ -39,7 +39,8 @@ app.listen(port, () => {
 router.get('/', (req, res) => {
   // User is logged in
   if (req.session && req.session.user) {
-      return res.render('pages/home');
+    console.log(req.session.user);
+    return res.render('pages/home');
   }
   else {
     // User not logged in
@@ -89,8 +90,8 @@ router.post('/signup', (req, res) => {
   // If no problems found with Sign Up Info, proceed to create user and sign in
   if (problems.length === 0) {
     userauth.create_user(user_info);
-    req.session.user = {id: user_info.email, password: user_info.password};
-    return res.redirect('/');
+    req.session.user = {id: user_info.email, password: user_info.password, "firstname": user_info.firstname};
+    return res.redirect('/personalize');
   }
   // Sign up info invalid, display error on signup page
   else {
@@ -98,33 +99,19 @@ router.post('/signup', (req, res) => {
   }
 });
 
-// Callback function for profile page
-function myFunc(username, password, callback) {
-  const mysql = require('mysql');
-  const connection = mysql.createConnection({
-    host: 'idiet.cqywkz4otd3h.us-east-2.rds.amazonaws.com',
-    user: 'idiet',
-    password: '1a2b3c4d5e',
-    database: 'idiet'
-  });
+// Personalize Page
+router.get('/personalize', (req, res) => {
+  return res.render('pages/personalize');
+});
 
-   connection.query('SELECT * FROM Users WHERE UserName = ?', [username], function (err, result, fields){
-    if (err) throw err;
-    return callback(result);
-  });
-};
+router.post('/personalize', (req, res) => {
+  return res.redirect('/');
+});
 
 // Profile Page
 router.get('/profile', (req, res) => {
-
-  // Using callback
-  myFunc(req.session.user.id, req.session.user.password, function(returnVariable)
-  {
-
-    return res.render('pages/profile', {name:returnVariable[0].FirstName, username: returnVariable[0].UserName, lname: returnVariable[0].LastName, height: returnVariable[0].Height, weight: returnVariable[0].Weight, age: returnVariable[0].Age, phone: returnVariable[0].Phone, email: returnVariable[0].Email});
-  });
+  return res.render('pages/profile');
 });
-
 
 
 // Logout Current User

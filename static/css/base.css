@@ -181,7 +181,7 @@ a {
 .sidebar-mobile-icon-holder {
   display: none;
   cursor: pointer;
-  padding: 10px 0px 0px 0px;
+  padding: 10px 0 0 0;
   position: absolute;
   top: 0;
   left: 0;
@@ -191,10 +191,7 @@ a {
   text-align: left !important;
 }
 
-/* Pop Up Search Bar
-–––––––––––––––––––––––––––––––––––––––––––––––––– */
-
- .sidebar {
+.sidebar {
   position: fixed;
   height: 100%;
   width: 185px;
@@ -204,53 +201,23 @@ a {
   z-index: 1000;
 }
 
-input.text
-{
-  background:white;
-  border:1px solid #ddd;
-  color:#333;
-  font-size: 13.5pt;
-  height: 35px;
-  border-radius: 15px;
-  margin:0;
-  padding:2px 6px;
-  width: 100%;
+.navbar-holder {
+  display: none;
 }
-
-input.text.short
-{
-  width: 50%;
+.navbar-login {
+  display: none;
 }
-
-@media screen and (max-width: 975px) {
-  .navbar-holder {
-/*    visibility: hidden;
-    clear: both;
-    float: left;
-    margin: 10px auto 5px 20px;
-    width: 0%;*/
-    display: none;
-  }
-  .navbar-login {
-/*    visibility: hidden;
-    clear: both;
-    float: left;
-    margin: 10px auto 5px 20px;
-    width: 0%;*/
-    display: none;
-  }
-  .navbar-brand {
-    margin-left: 15px;
-  }
-  .navbar-list {
-    text-align: center;
-  }
-  .sidebar-mobile-icon-holder {
-    display: inline-block;
-    z-index: 500;
-    height: 50px;
-    width: 50px;
-  }
+.navbar-brand {
+  margin-left: 15px;
+}
+.navbar-list {
+  text-align: center;
+}
+.sidebar-mobile-icon-holder {
+  display: inline-block;
+  z-index: 500;
+  height: 50px;
+  width: 50px;
 }
 
 /* Mobile sidebar icon animation */
@@ -290,10 +257,24 @@ input.text.short
 }
 
 /* Forms */
-.form-field {
+input.text {
+   background:white;
+   border:1px solid #ddd;
+   color:#333;
+   font-size: 13.5pt;
+   height: 35px;
+   border-radius: 15px;
+   margin:0;
+   padding:2px 6px;
+   width: 100%;
+ }
+input.text.short {
+   width: 50%;
+ }
+div.form-field {
   margin-bottom: 15px;
 }
-.form-field.err-field {
+div.form-field.err-field {
   margin-bottom: 0;
 }
 
