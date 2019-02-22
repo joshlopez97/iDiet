@@ -28,10 +28,17 @@ function attachEventListeners(action)
 function showLogin()
 {
   console.log("show login");
-  $(".errorMsg").css("display", "none");
+
+  // Clear error messages
+  $(".errorBox").css("display", "none");
+
+  // Remove and disable buttons on Start screen
   $("#login-btn").unbind("click");
   $(".button-container").fadeOut(500);
+
+  // Reveal login screen
   $(".logo").animate({"top": "50%"}, 600);
+  $(".form-holder").css("display", "block");
   $(".start-page-holder").animate({"height": "30%"},
     600,
     function(){
@@ -42,9 +49,16 @@ function showLogin()
 function hideLogin()
 {
   console.log("hide login");
+
+  // Disable back button on Login screen
   $(".back").unbind("click");
+
+  // Reveal Start screen buttons
   $(".button-container").fadeIn(500);
+
+  // Hide login screen
   $(".logo").animate({"top": "35%"}, 600);
+  $(".form-holder").css("display", "block");
   $(".start-page-holder").animate({"height": "100%"},
     600,
     function(){

@@ -14,7 +14,7 @@ body {
   padding: 8px;
 }
 
-.login-wrapper {
+.start-wrapper {
   background: #2c6547;
   color: white !important;
 }
@@ -27,18 +27,15 @@ body {
   margin: 0;
 }
 
-input.text {
-  margin-bottom: 10px;
-}
-
 .back-btn {
-  background-size: 40px 40px;
   background: url(/img/left-arrow-white.png) no-repeat center;
+  background-size: 40px 40px;
 }
 
 .form-holder {
   margin-top: 30px;
   height: calc(100% - 90px);
+  font-size: 13.5pt;
 }
 
 .label {

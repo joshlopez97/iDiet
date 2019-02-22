@@ -73,25 +73,27 @@ router.get('/signup', (req, res) => {
 });
 
 router.post('/signup', (req, res) => {
-  let user_info = {"username" : req.body.username,
+  let user_info = {"email" : req.body.email,
                  "password" : req.body.password,
                  "firstname" : req.body.firstname,
-                 "lastname" : req.body.lastname,
                  "height" : req.body.height,
                  "weight" : req.body.weight,
-                 "email" : req.body.email,
-                 "phone" : req.body.phone,
                  "age" : req.body.age};
+  console.log(user_info);
 
-  // Sign up info is valid, create user and sign in
-  if (userauth.verify_user_info(user_info)) {
+  // Verify Sign Up Info
+  const problems = userauth.verify_user_info(user_info);
+  console.log(problems);
+
+  // If no problems found with Sign Up Info, proceed to create user and sign in
+  if (problems.length === 0) {
     userauth.create_user(user_info);
-    req.session.user = {id: user_info.username, password: user_info.password};
+    req.session.user = {id: user_info.email, password: user_info.password};
     return res.redirect('/');
   }
   // Sign up info invalid, display error on signup page
   else {
-    return res.render('pages/signup');
+    return res.render('pages/signup', data={"problems":problems});
   }
 });
 

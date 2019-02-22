@@ -14,12 +14,14 @@
     } else {
       console.log("Error connecting database");
     }
+  });
+
   exports.authenticate = function(email, password, callback) {
-    console.log("authenticating");
-    connection.query('SELECT * FROM Account WHERE Email = ?', [email], function(error, results, fields){
+    console.log(`Authenticating ${email}`);
+    connection.query(`SELECT * FROM Account WHERE Email = ?`, [email], function(error, results, fields){
       if (error)
       {
-        console.log("error occurred", error);
+        console.log("Error occurred:\n", error);
       }
       else
       {
@@ -45,16 +47,56 @@
     });
   };
 
-  exports.verify_user_info = function(user_info) {
-    console.log("validating user info");
+  function convert_to_inches(height_string) {
+    console.log(height_string);
+    try {
+      const heightRegex = /^([1-9]) ' ([0-9]|1[01])$/;
+      const matches = heightRegex.exec(height_string),
+        feet = parseInt(matches[1]),
+        inches = parseInt(matches[2]);
+      return (feet * 12) + inches;
+    }
+    catch (exception) {
+      return 0;
+    }
+  }
 
-    return true;
+  /**
+   *  Verifies user_info and returns list of problems found (if any).
+   *
+   *  The list returned by this function contains the names of all fields
+   *  that have INVALID values. These values are checked against regex
+   *  expressions stored in the `validators` dictionary. If the input is
+   *  valid, an empty list is returned.
+   */
+  exports.verify_user_info = function(user_info) {
+    const validators = {
+      "email":/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/i,
+      "password":/.+/,
+      "firstname":/^[a-z ,.'-]+$/i,
+      "height":/^[1-9] ' ([0-9]|1[01])$/,
+      "weight":/^[0-9]{2,}$/,
+      "age":/^[0-9]{2,}$/
+    };
+    let problems = [];
+    for (let field in user_info)
+    {
+      if (field in validators)
+      {
+        if (!user_info[field].match(validators[field]))
+          problems.push(field);
+      }
+    }
+
+    user_info.height = convert_to_inches(user_info.height);
+
+    return problems;
   };
 
   exports.create_user = function(user_info) {
     // Inserting Post Request
-    const sql = `INSERT into Account(Email, UserPassword, FirstName, Height, Weight, Age, LastName, Phone, Email) 
-                values ('${user_info.username}', '${user_info.password}', '${user_info.firstname}', '${user_info.height}', '${user_info.weight}', '${user_info.age}', '${user_info.lastname}', '${user_info.phone}', '${user_info.email}')`;
+    const sql = `INSERT into Account(Email, UserPassword, FirstName, Height, Weight, Age, Allergies) 
+                values ('${user_info.email}', '${user_info.password}', '${user_info.firstname}', ${user_info.height}, ${user_info.weight}, ${user_info.age}, NULL)`;
     console.log(sql);
     connection.query(sql, (err) => {
       if(err) throw err;

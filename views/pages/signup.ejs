@@ -13,7 +13,7 @@
   </script>
 </head>
 <body style="background: #fff">
-  <div class="login-wrapper">
+  <div class="start-wrapper">
       <div class="start-page-holder">
         <div class="back-btn"></div>
         <img id="logo" class="logo-top-center" src="/img/icon.png">
@@ -25,26 +25,50 @@
               <h3>Sign Up</h3>
               <h5>To get started, please enter your personal information below.</h5>
             </div>
-            <div style="font-size: 13.5pt;">
-              <span class="label">Username:</span>
-              <input name="username" class="text" type="text">
-              <span class="label">Password:</span>
-              <input name="password" class="text" type="password">
-              <span class="label">First Name:</span>
-              <input name="firstname" class="text" type="text">
-              <span class="label">Last Name:</span>
-              <input class="text" type="text" name="lastname">
-              <span class="label">Height:</span>
-              <input name="height short" id="height" class="text" type="tel" pattern="[0-9]*" novalidate>
-              <span class="label">Weight:</span>
-              <input name="weight" class="text short" type="tel" pattern="[0-9]*" style="display:inline-block;"> LBS
-              <br>
-              <span class="label">Age:</span>
-              <input name="age" id="age" class="text short" type="tel" pattern="[0-9]*" style="width: 50%;height: 35px;">
-              <span class="label">Email:</span>
-              <input class="text" type="text" name="email">
-              <span class="label">Phone Number:</span>
-              <input name="phone" class="text" type="text">
+            <div class="fields">
+              <div class="form-field<%-(locals.problems && problems.includes('email'))? ' err-field':''%>">
+                <span class="label">Email:</span>
+                <input name="email" class="text" type="text" maxlength="40">
+                <% if (locals.problems && problems.includes('email')) { %>
+                  <span class="errorMsg">Please enter a valid email address.</span>
+                <% } %>
+              </div>
+              <div class="form-field<%-(locals.problems && problems.includes('password'))? ' err-field':''%>">
+                <span class="label">Password:</span>
+                <input name="password" class="text" type="password" maxlength="30">
+                <% if (locals.problems && problems.includes('password')) { %>
+                  <span class="errorMsg">Please enter a password.</span>
+                <% } %>
+              </div>
+              <div class="form-field<%-(locals.problems && problems.includes('firstname'))? ' err-field':''%>">
+                <span class="label">First Name:</span>
+                <input name="firstname" class="text" type="text" maxlength="30">
+                <% if (locals.problems && problems.includes('firstname')) { %>
+                  <span class="errorMsg">Please enter a valid first name.</span>
+                <% } %>
+              </div>
+              <div class="form-field<%-(locals.problems && problems.includes('height'))? ' err-field':''%>">
+                <span class="label">Height:</span>
+                <input name="height" id="height" class="text short" type="tel" maxlength="5">
+                <% if (locals.problems && problems.includes('height')) { %>
+                  <span class="errorMsg">Please enter a valid height.</span>
+                <% } %>
+              </div>
+              <div class="form-field<%-(locals.problems && problems.includes('weight'))? ' err-field':''%>">
+                <span class="label">Weight:</span>
+                <input name="weight" class="text short" type="tel" style="display:inline-block;" maxlength="4"> LBS
+                <% if (locals.problems && problems.includes('weight')) { %>
+                  <span class="errorMsg">Please enter a valid weight.</span>
+                <% } %>
+              </div>
+              <div class="form-field<%-(locals.problems && problems.includes('age'))? ' err-field':''%>">
+                <span class="label">Age:</span>
+                <input name="age" id="age" class="text short" type="number" maxlength="3">
+                <% if (locals.problems && problems.includes('age')) { %>
+                  <span class="errorMsg">Please enter a valid age.</span>
+                <% } %>
+              </div>
+
             </div>
             <br>
             <input type="submit" value="Next" style="width: 120px;">

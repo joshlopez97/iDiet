@@ -1,11 +1,4 @@
 $(document).ready(function() {
-  /* Resize elements based on viewport size */
-  $(window).resize(function() {
-    if (document.documentElement.clientWidth <= 975) {
-      if ($(".sidebar").length > 0)
-        hideSidebar();
-    }
-  });
 
   /* Event handler for showing sidebar */
   $(".sidebar-mobile-icon-holder").click(displaySidebar);

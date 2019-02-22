@@ -55,14 +55,13 @@ a {
 /* div containing 'go back to home' button */
 .errorPage .row:last-child {
   width: 300px; /* match width of button */
-  margin: auto;
-  margin-top: 1em;
+  margin: 1em auto auto;
 }
 .errorPage a {
   margin-bottom: 2em;
 }
 
-.errorMsg {
+.errorBox {
   color: #8c2a2a;
   background: #ffdfdf;
   padding: 1% 5%;
@@ -75,6 +74,13 @@ a {
   width: 65%;
   max-width: 240px;
   text-align: center;
+}
+
+.errorMsg {
+  display: block;
+  color: #ff6363;
+  padding: 0 6px;
+  font-size: 11pt;
 }
 
 /* Navigation Bar
@@ -282,3 +288,12 @@ input.text.short
   transform:rotate(-45deg);
   top:48%;
 }
+
+/* Forms */
+.form-field {
+  margin-bottom: 15px;
+}
+.form-field.err-field {
+  margin-bottom: 0;
+}
+

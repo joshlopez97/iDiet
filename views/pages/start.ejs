@@ -13,7 +13,7 @@
   </script>
 </head>
 <body style="background: #fff">
-<div class="login-wrapper">
+<div class="start-wrapper">
   <div class="start-page-holder" style="<%=locals.action? 'height:30%':'' %>">
     <img class="logo" src="/img/logo.png" style="<%=locals.action? 'top:50%':'' %>">
     <div class="button-container" style="<%=locals.action? 'display:none':'' %>">
@@ -26,10 +26,10 @@
       </div>
     </div>
   </div>
-  <div class="form-holder">
+  <div class="form-holder" style="<%=locals.action? '':'display:none' %>">
     <div class="back-btn back"></div>
     <% if (locals.error && locals.error == 1) {%>
-      <div class="errorMsg">Invalid username or password.</div>
+      <div class="errorBox">Invalid username or password.</div>
     <% }%>
     <form enctype="application/x-www-form-urlencoded" method="post" class="login-form">
       <div class="login-header">
