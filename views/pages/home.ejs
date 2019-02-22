@@ -4,10 +4,26 @@
   <title>Homepage</title>
   <% include ../partials/head %>
   <link rel="stylesheet" type="text/css" 
-  href="/css/profile.css">
+  href="/css/home.css">
 </head>
 <body>
   <% include ../partials/header %>
+  <div class="home-wrapper">
+    <h1>Hello John!</h1>
+    <h4>Your meal today is:</h4>
+    <div class="meal-wrapper">
+      <div class="meal-holder-large">
+        <img class="thumb-large" src="/img/spaghetti.jpg">
+        <div class="meal-caption">
+          <div class="meal-title-large">Spaghetti</div>
+          <div class="meal-info">
+            <div id="calories"><b>Calories:</b> 400</div>
+            <div id="cost"><b>Cost:</b> $12</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>

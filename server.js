@@ -65,6 +65,12 @@ router.get('/', (req, res) => {
   }
 });
 
+// Temporary route for bypassing login
+router.get('/home', (req, res) => {
+  req.session.user = {id: "anon@gmail.com", password: "password"};
+  return res.render('pages/home')
+});
+
 // Start page
 router.get('/start', (req, res) => {
   return res.render('pages/start', {'action':req.query.action, 'error':req.query.error});

@@ -143,7 +143,7 @@ div.unfocused {
   height: 100%;
   width: 100%;
   position: fixed;
-  z-index: -10;
+  z-index: 900;
 }
 
 /* Sidebar Icon Animation
