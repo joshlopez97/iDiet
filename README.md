@@ -33,5 +33,6 @@ CREATE TABLE Account (
   Weight int NOT NULL,
   Age int NOT NULL,
   Allergies varchar(255)
-);```
+);
+```
 
