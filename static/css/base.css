@@ -204,10 +204,16 @@ input.text
   border:1px solid #ddd;
   color:#333;
   font-size: 13.5pt;
-  height: 40px;
+  height: 35px;
   border-radius: 15px;
   margin:0;
   padding:2px 6px;
+  width: 100%;
+}
+
+input.text.short
+{
+  width: 50%;
 }
 
 @media screen and (max-width: 975px) {

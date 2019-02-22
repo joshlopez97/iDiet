@@ -14,38 +14,37 @@
         window.location.href = "/start"
       });
       $("#height").on("input", function() {
-        let value = $(this).val(),
-            lastValue = $(this).data("lastVal"),
-            heightRegex = /^([1-9]) ?'? ?([0-9]| ?1[01])$/g
+        const value = $(this).val(),
+              lastValue = $(this).data("lastVal");
 
         // Allow user to backspace without autoformatting
         if (lastValue && lastValue.length > value.length)
         {
           $(this).data("lastVal", $(this).val());
+          return;
         }
+
+        const heightRegex = /^([1-9]) ?'? ?([0-9]| ?1[01])$/g;
+
         // Change "5" to "5 '" automatically
-        else if (value.match(/^[1-9] *$/))
+        if (value.match(/^[1-9] *$/))
         {
           $(this).val(value.charAt(0) + ' \' ');
-          $(this).data("lastVal", $(this).val());
         }
         // Changes "62", "6 2", "6'2", ... all to "6 ' 2"
         else if (value.match(heightRegex))
         {
-          let matches = heightRegex.exec(value),
-              feet    = matches[1],
-              inches  = matches[2];
+          const matches = heightRegex.exec(value),
+                feet    = matches[1],
+                inches  = matches[2];
           $(this).val(feet + ' \' ' + inches);
-          $(this).data("lastVal", $(this).val());
         }
         // Revert to last recorded value if input is invalid
         else
         {
-          if (lastValue)
-            $(this).val(lastValue);
-          else
-            $(this).val("");
+          $(this).val(lastValue? lastValue : "");
         }
+        $(this).data("lastVal", $(this).val());
       });
     });
   </script>
@@ -65,25 +64,24 @@
             </div>
             <div style="font-size: 13.5pt;">
               <span class="label">Username:</span>
-              <input class="text" type="text" name="username" style="width: 100%;height: 35px;">
+              <input name="username" class="text" type="text">
               <span class="label">Password:</span>
-              <input class="text" type="password" name="password" style="width: 100%;height: 35px;">
+              <input name="password" class="text" type="password">
               <span class="label">First Name:</span>
-              <input class="text" type="text" name="firstname" style="width: 100%;height: 35px;">
+              <input name="firstname" class="text" type="text">
               <span class="label">Last Name:</span>
-              <input class="text" type="text" name="lastname" style="width: 100%;height: 35px;">
+              <input class="text" type="text" name="lastname">
               <span class="label">Height:</span>
-              <input class="text" type="tel" pattern="[0-9]*" name="height" id="height" style="width: 50%;height: 35px;" novalidate>
+              <input name="height short" id="height" class="text" type="tel" pattern="[0-9]*" novalidate>
               <span class="label">Weight:</span>
-              <input class="text" type="tel" pattern="[0-9]*" name="weight" style="width: 50%;height: 35px; display:inline-block;"> LBS
+              <input name="weight" class="text short" type="tel" pattern="[0-9]*" style="display:inline-block;"> LBS
               <br>
               <span class="label">Age:</span>
-              <input class="text" type="tel" pattern="[0-9]*"  name="age" id="age" style="width: 50%;height: 35px;">
-              <input class="text" type="text" name="age" id="age" style="width: 50%;height: 35px;">
+              <input name="age" id="age" class="text short" type="tel" pattern="[0-9]*" style="width: 50%;height: 35px;">
               <span class="label">Email:</span>
-              <input class="text" type="text" name="email" style="width: 100%;height: 35px;">
+              <input class="text" type="text" name="email">
               <span class="label">Phone Number:</span>
-              <input class="text" type="text" name="phone" style="width: 100%;height: 35px;">
+              <input name="phone" class="text" type="text">
             </div>
             <br>
             <input type="submit" value="Next" style="width: 120px;">
