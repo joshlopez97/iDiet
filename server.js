@@ -83,7 +83,6 @@ router.post('/signup', (req, res) => {
                  "phone" : req.body.phone,
                  "age" : req.body.age};
 
-  info = user_info;
   // Sign up info is valid, create user and sign in
   if (userauth.verify_user_info(user_info)) {
     userauth.create_user(user_info);

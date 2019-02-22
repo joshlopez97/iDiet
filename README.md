@@ -2,20 +2,6 @@
 ## Overview
 iDiet is a mobile web application that prescribes users customizable meal plans based on health goals, dietary preferences/restrictions, and weekly budget for food.
 
-## MySQL Database Schema
-CREATE TABLE Users (  
-    Username varchar(255) UNIQUE,  
-    UserPassword varchar(255),  
-    Email varchar(255),  
-    FirstName varchar(255),  
-    LastName varchar(255),  
-    Height int,  
-    Weight int,  
-    Age int,  
-    Phone varchar(255),  
-    Email varchar(255)  
-);
-
 ## Development
 To set up iDiet for local development:
 1. Clone this repository via:  
@@ -27,3 +13,24 @@ To set up iDiet for local development:
 3. Run the application via:  
 `node server.js`  
 and then go to http://localhost:5000 to view the application.
+
+## MySQL Database Schema
+Currently, this is the generic schema for iDiet accounts:
+- Email: User's email used to sign in
+- UserPassword: Chosen password used to sign in (will be replaced with PasswordHash)
+- FirstName: User's first name
+- Height: User's height stored in inches
+- Weight: User's weight stored in pounds
+- Age: User's age (will be replaced with date of birth)
+- Allergies: String containing comma separated list of allergies to avoid in diet plan
+
+`CREATE TABLE Account (
+  Email varchar(255) UNIQUE NOT NULL,
+  UserPassword varchar(255) NOT NULL,
+  FirstName varchar(255) NOT NULL,
+  Height int NOT NULL,
+  Weight int NOT NULL,
+  Age int NOT NULL,
+  Allergies varchar(255)
+);`
+
