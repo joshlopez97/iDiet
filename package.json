@@ -57,6 +57,7 @@
     "statuses": "^1.5.0",
     "type-is": "^1.6.16",
     "uid-safe": "^2.1.5",
+    "unirest": "^0.6.0",
     "unpipe": "^1.0.0",
     "utils-merge": "^1.0.1",
     "vary": "^1.1.2"

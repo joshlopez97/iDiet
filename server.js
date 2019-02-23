@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
+
 // Connecting MYSQL Database
 const mysql = require('mysql');
 const connection = mysql.createConnection({
@@ -20,6 +21,16 @@ connection.connect(function(err){
 });
 
 // iDiet node modules
+let user_info = {"targetCalories" : 2000,
+               "dietType" : "vegetarian",
+               "restriction1" : "shell",
+               "restriction2" : "fish"};
+
+const mealApi = require('./user/mealsapi.js'),
+      meals = mealApi.create(user_info);
+
+meals.generateWeeklyMeals();
+      
 const accountModule = require('./user/account.js'),
       account = accountModule.create({"connection":connection});
 
@@ -140,3 +151,4 @@ router.get('/logout', (req, res) => {
     });
   }
 });
+
