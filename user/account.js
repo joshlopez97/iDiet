@@ -1,7 +1,8 @@
 (function() {
 
-  function Account(options) {
+  function Account(options, email) {
     this.options = options;
+    this.email = email;
   }
 
   function convert_to_inches(height_string) {
@@ -96,8 +97,8 @@
     });
   };
 
-  exports.create = function(options) {
-    return new Account(options);
+  exports.create = function(options, email) {
+    return new Account(options, email);
   };
 
 }());
