@@ -10,4 +10,4 @@
   exports.create = function(options) {
     return new Fitbit(options);
   };
-});
+}());
