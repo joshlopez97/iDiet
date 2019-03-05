@@ -53,9 +53,14 @@
 
 	}
 
+
 	// Function to generate day meals (Name is outdated will eventually change func name to generateDailyMeal)
 	MealsApi.prototype.generateWeeklyMeals = function()
 	{
+
+		// Add expiration date
+		// Query email meals (if not expired yet, returnn that)
+		// else clear everything and regenerate.
 /* 
 		* TOTAL API CALLS PER USER *
 		- 1 to generate the meal plan for the day
@@ -105,11 +110,12 @@
 
 */
 
-/*      ** STORING MEALS SHOULD FIND A WAY TO STORE UNIQUE MEAL ID PER USER RIGHT NOW ONLY STORING ALL RECIPES FOR AN EMAIL ** // SEMI DONE
+      //** STORING MEALS SHOULD FIND A WAY TO STORE UNIQUE MEAL ID PER USER RIGHT NOW ONLY STORING ALL RECIPES FOR AN EMAIL ** // SEMI DONE
 
 		let link = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/mealplans/generate?timeFrame=day&targetCalories=" + this.options.targetCalories + "&diet=" + this.options.dietType + "&exclude=shellfish%2C+olives";
 		
 		//INITIAL MEAL PLAN CREATION FOR USER
+
 		unirest.get(link)
 		.header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
 		.end(function (result) {
@@ -118,30 +124,25 @@
 
 		  for (i = 0; i < result.body.meals.length; i++)
 		  {
-		  	const sql = `INSERT into Meals(memail, mrid) 
-		  	            values ('josephbarbosaa@gmail.com', '${result.body.meals[i].id}')`;
+		  	const sql = `INSERT into Meals(memail, mid, mrid) 
+		  	            values ('josephbarbosaa@gmail.com', '1', '${result.body.meals[i].id}')`;
 
 		  	console.log(sql);
 		  	connection.query(sql, (err) => {
-		  	  if(err) throw err;
-		  	  // IF DUP ENTRY JUST CLOSE CONNECTION, RECIPE EXISTS
-		  	  if (err === "ER_DUP_ENTRY")
 		  	  	console.log(sql);
 		  	});
-
-		  	//console.log(result.body.meals[i].id);
 		  }
 		});
 
-		HANDLE INGREDIENTS AND NUTRITIONAL INFO 
+		//HANDLE INGREDIENTS AND NUTRITIONAL INFO 
 
-		****** NOTES ******
-		API Call to get ingredients
-		Parse ingredients to put a new line per ingredient
-		Pass in parsed ingredient list into Cost Analysis API call
-		This method below uses a callback using getIngredients which queryRecipes also uses a callback.
+		//****** NOTES ******
+		//API Call to get ingredients
+		//Parse ingredients to put a new line per ingredient
+		//Pass in parsed ingredient list into Cost Analysis API call
+		//This method below uses a callback using getIngredients which queryRecipes also uses a callback.
 
-*/
+
 		//******************************************************//
 		// PROBLEM IS HERE!! Commented out to conserve API calls
 		//******************************************************//
@@ -149,24 +150,23 @@
 
 		// Ingredients extraction, extracts the ingredients from each index of meals which is is a list of recipe IDs returned by callback function (queryRecipes)
 		// Semi-finished just need to figure out how the inner loop work please read problem:
-		// queryRecipes(function(meals)
-		// {
-		// 	for (i = 0; i < meals.length; i++)
-		// 	{	
-		// 		getIngredients(meals[i].mrid, function(ingredients)
-		// 		{
-		// 			// @ Josh - 2/23/19 - Joseph
-		// 			// Need a way to do ingredients[i].extendedIngredients.originalString.
-		// 			// Async process lets us do ingredients.extendedIngredients rn to print all the ingredient info
-		// 			// But probably need another callback to do a loop.
-		// 			//
-		// 			console.log(ingredients.extendedIngredients);
-		// 		});
-		// 	}
-		// });
-/*
-		** Cost Analysis Of Meal plan (1 API Call) ** 
-			- DONE (Just need to pass in one full string of all ingredients separated by '\n' per ingredient extracted by function above)
+
+		queryRecipes(function(meals)
+		{
+			for (i = 0; i < meals.length; i++)
+			{	
+				let recipeString = "";
+				getIngredients(meals[i].mrid, function(ingredients)
+				{
+					for (let ingredient of ingredients.extendedIngredients)
+					{
+						recipeString += ingredient.originalString + "\n";
+					}
+
+					console.log(recipeString);
+				});
+			}
+		});
 
 		unirest.post("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/visualizePriceEstimator")
 		.header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
@@ -181,14 +181,15 @@
 		  console.log(result.status, result.headers, result.body);
 		  var str = result.body;
 
-		Returned in HTML, used regex below to extract final price (Working) // Store into DB Under
-	 	let prices = str.match(/\$((?:\d|\,)*\.?\d+)/g) || []
-	 	let finalPrice = prices[prices.length-1]
+		//Returned in HTML, used regex below to extract final price (Working) // Store into DB Under
+	    let prices = str.match(/\$((?:\d|\,)*\.?\d+)/g) || []
+	    	let finalPrice = prices[prices.length-1]
 		console.log(finalPrice);
 
-		  Store into DB
+		//Store into DB
+		
 		});
-*/
+
 
 
 		// TODO Notes:
