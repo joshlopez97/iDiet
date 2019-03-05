@@ -32,7 +32,7 @@ const mealApi = require('./user/mealsapi.js'),
 // FITBIT Api Module
 const fitbitApi = require('./user/fitbit.js');
 const Fitbit = fitbitApi.create({"connection":connection});
-meals.generateWeeklyMeals();
+meals.generateWeeklyMeals(function(){});
       
 const accountModule = require('./user/account.js'),
       account = accountModule.create({"connection":connection});
