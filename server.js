@@ -29,6 +29,10 @@ let user_info = {"targetCalories" : 2000,
 const mealApi = require('./user/mealsapi.js'),
       meals = mealApi.create(user_info);
 
+// FITBIT Api Module
+const fitbitApi = require('./user/fitbit.js');
+const Fitbit = fitbitApi.create({"connection":connection});
+
 meals.generateWeeklyMeals();
       
 const accountModule = require('./user/account.js'),
