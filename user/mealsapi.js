@@ -34,10 +34,10 @@
 	}
 
 	// Callback function to get a list of recipe IDs 
-	function queryRecipes(callback)
+	function getRecipesFor(username, callback)
 	{
 		// REPLACE EMAIL LATER WITH USER INPUT
-		connection.query(`SELECT m.mrid FROM Meals m WHERE m.memail = 'josephbarbosaa@gmail.com'`, function(error, results, fields){
+		connection.query(`SELECT m.mrid FROM Meals m WHERE m.memail = '${username}'`, function(error, results, fields){
 			return callback(results);
 		});
 	}
@@ -53,62 +53,14 @@
 
 	}
 
+	function getPriceInfo(meal)
+  {
+
+  }
 
 	// Function to generate day meals (Name is outdated will eventually change func name to generateDailyMeal)
-	MealsApi.prototype.generateWeeklyMeals = function()
+	MealsApi.prototype.generateWeeklyMeals = function(callback)
 	{
-
-		// Add expiration date
-		// Query email meals (if not expired yet, returnn that)
-		// else clear everything and regenerate.
-/* 
-		* TOTAL API CALLS PER USER *
-		- 1 to generate the meal plan for the day
-		- 3 to extract ingredients list per day (1 per meal)
-		- 1 to do total cost analysis of all accumulated ingredients list
-		TOTAL : 5 API calls per user 
-
-		------------------------------------------------
-
-		* New SQl Tables Interace *
-		CREATE Table Meals
-		(
-			memail varchar(255),
-			mid varchar(255),
-			mrid varchar(200),
-			PRIMARY KEY(mrid)
-		);
-
-		CREATE Table Recipes
-		(
-			r_rid varchar(200),
-			r_mid varchar(255),
-			price DECIMAL(18,4),
-			ingredients varchar(1000), // Make new line 
-			calories DECIMAL(18,4),
-			protein DECIMAL(10, 4),
-			fat DECIMAL(10,4),
-			carbs DECIMAL(10,4),
-			pricture varchar(255),
-			PRIMARY KEY(r_rid, r_mid)
-		);
-		
-		--------------------------------------------------
-		
-		* User info that will be passed in (Here for reference) *
-
-			let user_info = {"targetCalories" : 2000,
-			               "dietType" : (vegeterian, etc)
-			               "restriction1" : ""
-			               "restriction2" : ""
-
-	  * Indexing into API Results (Instructions) *
-	  running index function returns result JSON object
-	  result.status has all the status regarding num calls left, etc.
-	  result.body.meals[1] // GET INDEX 1 OF MEALS (Day)
-	  result.body.nutrition // GET INDEX OF TOTAL NUTRITION (Can't index bc only has total)
-
-*/
 
       //** STORING MEALS SHOULD FIND A WAY TO STORE UNIQUE MEAL ID PER USER RIGHT NOW ONLY STORING ALL RECIPES FOR AN EMAIL ** // SEMI DONE
 
@@ -122,7 +74,7 @@
 			// Logs everything for now (Testing)
 		  console.log(result.status, result.headers, result.body);
 
-		  for (i = 0; i < result.body.meals.length; i++)
+		  for (let i = 0; i < result.body.meals.length; i++)
 		  {
 		  	const sql = `INSERT into Meals(memail, mid, mrid) 
 		  	            values ('josephbarbosaa@gmail.com', '1', '${result.body.meals[i].id}')`;
@@ -140,7 +92,7 @@
 		//API Call to get ingredients
 		//Parse ingredients to put a new line per ingredient
 		//Pass in parsed ingredient list into Cost Analysis API call
-		//This method below uses a callback using getIngredients which queryRecipes also uses a callback.
+		//This method below uses a callback using getIngredients which getRecipesFor also uses a callback.
 
 
 		//******************************************************//
@@ -148,47 +100,37 @@
 		//******************************************************//
 		// - Uncomment and run to test
 
-		// Ingredients extraction, extracts the ingredients from each index of meals which is is a list of recipe IDs returned by callback function (queryRecipes)
+		// Ingredients extraction, extracts the ingredients from each index of meals which is is a list of recipe IDs returned by callback function (getRecipesFor)
 		// Semi-finished just need to figure out how the inner loop work please read problem:
 
-		queryRecipes(function(meals)
+		getRecipesFor("josephbarbosaa@gmail.com", function(recipes)
 		{
-			for (i = 0; i < meals.length; i++)
-			{	
-				let recipeString = "";
-				getIngredients(meals[i].mrid, function(ingredients)
-				{
-					for (let ingredient of ingredients.extendedIngredients)
-					{
-						recipeString += ingredient.originalString + "\n";
-					}
-
-					console.log(recipeString);
-				});
+		  let recipeStr = "";
+			for (let i = 0; i < recipes.length; i++)
+			{
+			  getIngredients(recipes[i].mrid, function(ingredients){
+			    callback(ingredients);
+			    for (let ingredient of ingredients.extendedIngredients)
+          {
+            recipeStr += ingredient.originalString + "\n";
+          }
+          // unirest.post("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/visualizePriceEstimator")
+          //   .header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
+          //   .header("Accept", "text/html")
+          //   .header("Content-Type", "application/x-www-form-urlencoded")
+          //   .send("defaultCss=true")
+          //   .send("mode=1")
+          //   .send("showBacklink=false")
+          //   .send(`ingredientList=${recipeStr}`)
+          //   .send("servings=1")
+          //   .end(function (result) {
+          //     console.log(result.body);
+          //   });
+        });
 			}
 		});
 
-		unirest.post("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/visualizePriceEstimator")
-		.header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
-		.header("Accept", "text/html")
-		.header("Content-Type", "application/x-www-form-urlencoded")
-		.send("defaultCss=false")
-		.send("mode=1")
-		.send("showBacklink=false")
-		.send("ingredientList=3 oz flour\n5oz cheese")
-		.send("servings=2")
-		.end(function (result) {
-		  console.log(result.status, result.headers, result.body);
-		  var str = result.body;
 
-		//Returned in HTML, used regex below to extract final price (Working) // Store into DB Under
-	    let prices = str.match(/\$((?:\d|\,)*\.?\d+)/g) || []
-	    	let finalPrice = prices[prices.length-1]
-		console.log(finalPrice);
-
-		//Store into DB
-		
-		});
 
 
 
