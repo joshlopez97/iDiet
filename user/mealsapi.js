@@ -1,6 +1,14 @@
+/**
+ * This module is responsible for making calls to the Nutrition API in order to generate meal plans for
+ * users, store meals plans in the SQL database, and generate price/nutritional information.
+ */
 (function() {
 
-	// MealsAPI constructor taking in a dependencies object
+  /**
+   * This constructor creates a new MealsApi object with the provided dependencies.
+   * @param dependencies
+   * @constructor
+   */
 	function MealsApi(dependencies) {
 	  this.dependencies = dependencies;
 	}
@@ -100,16 +108,9 @@
 	};
 
 
-
-
-
-
-
-
-
-
-
-	// Providing interface for users to create a MealsApi object.
+  /**
+   * Creates MealsApi object
+   */
 	exports.create = function(dependencies) {
 	  return new MealsApi(dependencies);
 	};
