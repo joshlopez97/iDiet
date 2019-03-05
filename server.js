@@ -21,15 +21,15 @@ connection.connect(function(err){
 });
 
 // iDiet node modules
-let user_info = {"targetCalories" : 2000,
-               "dietType" : "vegetarian",
-               "restriction1" : "shell",
-               "restriction2" : "fish"};
+let mockuser = {"email" : "josephbarbosaa@gmail.com",
+                 "targetCalories" : 2000,
+                 "dietType" : "vegetarian",
+                 "restrictions" : "shellfish,olives"};
 
 const mealApi = require('./user/mealsapi.js'),
       meals = mealApi.create({"connection": connection,
                               "unirest": unirest,
-                              "mockuser": user_info});
+                              "userinfo": mockuser});
 
 const fitbitApi = require('./user/fitbit.js'),
       fitbit = fitbitApi.create({"connection":connection,
@@ -85,7 +85,7 @@ router.get('/', (req, res) => {
 // Temporary route for bypassing login
 router.get('/home', (req, res) => {
   req.session.user = {id: "anon@gmail.com", password: "password"};
-  meals.generateWeeklyMeals(function(){});
+  meals.generateDailyMeals(function(){});
   return res.render('pages/home')
 });
 

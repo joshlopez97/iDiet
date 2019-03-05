@@ -5,45 +5,54 @@
 	  this.dependencies = dependencies;
 	}
 
-	// Callback function to get a list of recipe IDs 
-	MealsApi.prototype.getRecipesFor = function(username, callback)
+  /**
+   * Queries for all meals currently in Meals table for user with
+   * provided email.
+   */
+	function getRecipesFor(email, connection, callback)
 	{
-		this.dependencies.connection.query(`SELECT m.mrid FROM Meals m WHERE m.memail = '${username}'`, function(error, results, fields){
+		connection.query(`SELECT m.mrid FROM Meals m WHERE m.memail = '${email}'`, function(error, results, fields){
 			return callback(results);
 		});
-	};
-
-	// Callback function to get a list of ingredients
-	function getIngredients(meal, unirest, callback)
-	{
-		unirest.get("https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/"+meal+"/information")
-		.header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
-		.end(function (result) {
-			return callback(result.body);
-		});
-
 	}
 
-  function addNewMeal(meal, connection, callback)
+  /**
+   * Calls Nutrition API to get list of ingredients for meal with meal_id.
+   */
+	function getIngredients(meal_id, unirest, callback)
+	{
+		unirest.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${meal_id}/information`)
+		.header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
+		.end(callback);
+	}
+
+  /**
+   * Add new meal to table for user with provided email. This table only contains the meals
+   * on the current meal plan of the user.
+   */
+  function addNewMeal(meal, email, connection, callback)
   {
     const sql = `INSERT into Meals(memail, mid, mrid) 
-		  	            values ('josephbarbosaa@gmail.com', '1', '${meal.id}')`;
+		  	            values ('${email}', '1', '${meal.id}')`;
 
-    console.log(sql);
-    connection.query(sql, (err) => {
-      console.log(sql);
-      callback();
-    });
+    connection.query(sql, callback);
   }
 
-	// Function to generate day meals (Name is outdated will eventually change func name to generateDailyMeal)
-	MealsApi.prototype.generateWeeklyMeals = function(callback)
+  /**
+   *
+   * @param callback Action to perform after meals are retrieved
+   */
+	MealsApi.prototype.generateDailyMeals = function(callback)
 	{
-    let link = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/mealplans/generate?timeFrame=day&targetCalories=" + this.dependencies.mockuser.targetCalories + "&diet=" + this.dependencies.mockuser.dietType + "&exclude=shellfish%2C+olives";
-		
 		//INITIAL MEAL PLAN CREATION FOR USER
     const connection = this.dependencies.connection,
-          unirest = this.dependencies.unirest;
+          unirest = this.dependencies.unirest,
+          email = this.dependencies.userinfo.email,
+          link = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/mealplans/" +
+                 "generate?timeFrame=day" +
+                 "&targetCalories=" + this.dependencies.userinfo.targetCalories +
+                 "&diet=" + this.dependencies.userinfo.dietType +
+                 "&exclude=" + encodeURI(this.dependencies.userinfo.restrictions);
 
 		unirest.get(link)
 		.header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
@@ -53,7 +62,7 @@
 
 		  for (let i = 0; i < result.body.meals.length; i++)
 		  {
-		    addNewMeal(result.body.meals[i], connection, function(){});
+		    addNewMeal(result.body.meals[i], email, connection, function(){});
 		  }
 		});
 
@@ -65,7 +74,8 @@
       let recipeStr = "";
       for (let i = 0; i < recipes.length; i++)
       {
-        getIngredients(recipes[i].mrid, unirest, function(ingredients){
+        getIngredients(recipes[i].mrid, unirest, function(results){
+          const ingredients = results.body;
           callback(ingredients);
           for (let ingredient of ingredients.extendedIngredients)
           {
@@ -86,17 +96,8 @@
         });
       }
     };
-		this.getRecipesFor("josephbarbosaa@gmail.com", recipeCallback);
-
-
-
-
-
-		// TODO Notes:
-		// 1) RUN COST ANALYSIS FOR MEAL PLAN (1 API call per ingredient list)
-		// 2) STORE Meal Plan Info IN mySQL Database
-		// 3) QUERY DB FOR THE PRICE OF MEAL PLAN CLOSEST TO USER BUDGET
-	}
+		getRecipesFor(email, connection, recipeCallback);
+	};
 
 
 
