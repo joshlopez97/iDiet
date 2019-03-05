@@ -2,7 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-
+const unirest = require('unirest');
 
 // Connecting MYSQL Database
 const mysql = require('mysql');
@@ -27,12 +27,13 @@ let user_info = {"targetCalories" : 2000,
                "restriction2" : "fish"};
 
 const mealApi = require('./user/mealsapi.js'),
-      meals = mealApi.create(user_info);
+      meals = mealApi.create({"connection": connection,
+                              "unirest": unirest,
+                              "mockuser": user_info});
 
-// FITBIT Api Module
-const fitbitApi = require('./user/fitbit.js');
-const Fitbit = fitbitApi.create({"connection":connection});
-meals.generateWeeklyMeals(function(){});
+const fitbitApi = require('./user/fitbit.js'),
+      fitbit = fitbitApi.create({"connection":connection,
+                                 "unirest": unirest});
       
 const accountModule = require('./user/account.js'),
       account = accountModule.create({"connection":connection});
@@ -84,6 +85,7 @@ router.get('/', (req, res) => {
 // Temporary route for bypassing login
 router.get('/home', (req, res) => {
   req.session.user = {id: "anon@gmail.com", password: "password"};
+  meals.generateWeeklyMeals(function(){});
   return res.render('pages/home')
 });
 
