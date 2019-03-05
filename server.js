@@ -66,11 +66,13 @@ app.listen(port, () => {
 // Home Page
 router.get('/', (req, res) => {
   // User is logged in
-  if (req.session && req.session.user) {
+  if (req.session && req.session.user)
+  {
     console.log(req.session.user);
     return res.render('pages/home');
   }
-  else {
+  else
+  {
     // User not logged in
     return res.redirect('/start');
   }
