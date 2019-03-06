@@ -3,16 +3,16 @@
   position: absolute;
   top: 61px;
   padding: 20px;
-  width: 100%;
-  height: 100%;
+  width: calc(100% - 40px);
 }
+
 
 .meal-wrapper
 {
+  display:inline-block;
   position: relative;
-  width: calc(100% - 40px);
-  height: 50%;
-  margin: 30px 0;
+  width: 30%;
+  margin: calc(10% / 6);
 }
 
 .meal-holder
@@ -20,30 +20,52 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  width: 65%;
+  width: 80%;
   border: 1px solid #d6d6d6;
   border-radius: 5px;
   background:white;
-  padding: 10px 15px;
+  padding: 10px 10px;
 }
 
 .meal-title
 {
-  font-size: 17pt;
+  font-size: 9pt;
 }
 
 .meal-info
 {
-  padding-left: 10px;
+  font-size: 8pt;
+}
+
+@media (min-width: 600px) {
+  .meal-wrapper
+  {
+    margin: calc(10% / 4);
+  }
+  .meal-title
+  {
+    font-size: 12pt;
+  }
+
+  .meal-info
+  {
+    font-size: 9pt;
+  }
 }
 
 .thumbnail
 {
   display:block;
-  max-height: 150px;
+  max-width:90%;
   margin: auto;
 }
 .meal-row
 {
+  position: absolute;
+  top: 180px;
   height: 100px;
+  width: 85%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: justify;
 }
