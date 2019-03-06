@@ -42,13 +42,13 @@
       for (let nutrient of results.body.nutrition.nutrients)
       {
         if (nutrient.title.toLowerCase() === 'calories')
-          foodData["calories"] = nutrient.amount;
+          foodData["calories"] = Math.round(nutrient.amount);
         if (nutrient.title.toLowerCase() === 'protein')
-          foodData["protein"] = nutrient.amount;
+          foodData["protein"] = Math.round(nutrient.amount);
         if (nutrient.title.toLowerCase() === 'carbohydrates')
-          foodData["carbs"] = nutrient.amount;
+          foodData["carbs"] = Math.round(nutrient.amount);
         if (nutrient.title.toLowerCase() === 'fat')
-          foodData["fat"] = nutrient.amount;
+          foodData["fats"] = Math.round(nutrient.amount);
       }
       foodData["imagelink"] = results.body.image;
       foodData["title"] = results.body.title;
@@ -108,7 +108,6 @@
 		.end(function (result) {
 		  for (let i = 0; i < result.body.meals.length; i++)
 		  {
-		    console.log(result.body.meals[i].imageUrls);
 		    addNewMeal(result.body.meals[i], email, connection, function(){});
 		  }
 		});
@@ -119,35 +118,82 @@
     let recipeCallback = function(recipes)
     {
       let mealplan = [];
-      const priceRegex = /(?:Cost per Serving: )(\$\d+\.\d\d)/;
       let getDinner = function(){
-        getFoodInfo(recipes[2].mrid, unirest, function(results){
-          mealplan.push(results);
-          callback(mealplan);
+        getMealFromCache(recipes[2].mrid, connection, function(result)
+        {
+          if (result.length > 0)
+          {
+            mealplan.push(result[0]);
+            callback(mealplan);
+          }
+          else
+          {
+            getFoodInfo(recipes[2].mrid, unirest, function(results){
+              results["type"] = "dinner";
+              addMealToCache(results, connection);
+              mealplan.push(results);
+              callback(mealplan);
+            });
+          }
         });
       };
       let getLunch = function(){
-        getFoodInfo(recipes[1].mrid, unirest, function(results){
-          mealplan.push(results);
-          getDinner();
+        getMealFromCache(recipes[1].mrid, connection, function(result)
+        {
+          if (result.length > 0)
+          {
+            mealplan.push(result[0]);
+            getDinner();
+          }
+          else
+          {
+            getFoodInfo(recipes[1].mrid, unirest, function(results){
+              results["type"] = "lunch";
+              addMealToCache(results, connection);
+              mealplan.push(results);
+              getDinner();
+            });
+          }
         });
       };
       let getBreakfast = function(){
-        getFoodInfo(recipes[0].mrid, unirest, function(results){
-          mealplan.push(results);
-          getLunch();
+        getMealFromCache(recipes[0].mrid, connection, function(result)
+        {
+          if (result.length > 0)
+          {
+            mealplan.push(result[0]);
+            getLunch();
+          }
+          else
+          {
+            getFoodInfo(recipes[0].mrid, unirest, function(results){
+              results["type"] = "breakfast";
+              addMealToCache(results, connection);
+              mealplan.push(results);
+              getLunch();
+            });
+          }
         });
+
       };
       getBreakfast();
     };
 		getRecipesFor(email, connection, recipeCallback);
 	};
 
-	function getNutrients(foodData, unirest, callback)
+	function addMealToCache(food_data, connection, callback=()=>{})
   {
-    unirest.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${foodData["mid"]}/information?includeNutrition=true`)
-      .header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
-      .end(callback);
+    connection.query(`INSERT into MealEntry(mid, title, type, price, imagelink, calories, protein, carbs, fats) 
+    values(${food_data.mid},'${food_data.title}','${food_data.type}','${food_data.price}','${food_data.imagelink}',${food_data.protein},${food_data.calories},${food_data.carbs},${food_data.fats});`,
+      callback);
+  }
+
+  function getMealFromCache(meal_id, connection, callback=()=>{})
+  {
+    connection.query(`SELECT * FROM MealEntry m WHERE m.mid=${meal_id};`, function(err, result, fields){
+      if (err) throw err;
+      callback(result);
+    });
   }
 
 
