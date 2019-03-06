@@ -19,7 +19,7 @@
    */
 	function getRecipesFor(email, connection, callback)
 	{
-		connection.query(`SELECT m.mrid FROM Meals m WHERE m.memail = '${email}'`, function(error, results, fields){
+		connection.query(`SELECT * FROM UserMeal m WHERE m.email = '${email}'`, function(error, results, fields){
 			return callback(results);
 		});
 	}
@@ -33,7 +33,6 @@
 	function getFoodInfo(meal_id, unirest, callback)
 	{
     let foodData = {};
-    const priceRegex = /(?:Cost per Serving: )(\$\d+\.\d\d)/;
     foodData["mid"] = meal_id;
 		unirest.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${meal_id}/information?includeNutrition=true`)
 		.header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
@@ -68,22 +67,53 @@
         .send(`ingredientList=${recipeStr}`)
         .send("servings=1")
         .end(function(results){
-          foodData["price"] = priceRegex.exec(results.body)[1];
+          const priceRegex = /(?:Cost per Serving: )(\$\d+\.\d\d)/;
+          let res = priceRegex.exec(results.body);
+          if (res.length > 1)
+            foodData["price"] = res[1];
+          else
+          {
+            foodData["price"] = "$7.69";
+            console.log("ERROR:\n");
+            console.log(results.body)
+          }
           callback(foodData);
         });
     });
 	}
 
   /**
-   * Add new meal to table for user with provided email. This table only contains the meals
-   * on the current meal plan of the user.
+   * Assigns list of meals to user by mid (meal id).
    */
-  function addNewMeal(meal, email, connection, callback)
+  function assignMealsToUser(meals, current, email, connection, callback, offset = 0)
   {
-    const sql = `INSERT into Meals(memail, mid, mrid) 
-		  	            values ('${email}', '1', '${meal.id}')`;
+    if (meals.length === 0 || current >= meals.length)
+      return callback();
+    else
+    {
+      let index = Math.floor(current / 3) + offset;
+      const expire = new Date(),
+            dateOfMeal = new Date();
 
-    connection.query(sql, callback);
+      expire.setHours(24*(index+1),0,0,0);
+      dateOfMeal.setHours(24*index,0,0,0);
+      let adjustedIndex = dateOfMeal.getDay();
+
+      const id = meals[current]["id"] || meals[current]["mid"];
+
+      const sql = `INSERT into UserMeal(email, mid, expire, mindex) 
+		  	            values ('${email}', ${id}, '${expire.toUTCString()}', ${adjustedIndex})`;
+      console.log(sql);
+      current++;
+      if (current >= meals.length)
+        connection.query(sql, callback);
+      else {
+        connection.query(sql, function (err) {
+          if (err) throw err;
+          assignMealsToUser(meals, current, email, connection, callback, offset);
+        });
+      }
+    }
   }
 
 
@@ -92,95 +122,158 @@
    * Generate meal plan for user.
    * @param callback Action to perform after meals are generated
    */
-	MealsApi.prototype.generateDailyMeals = function(callback)
+	MealsApi.prototype.generateMealPlan = function(callback)
 	{
+	  // Define dependencies for inner functions
     const connection = this.dependencies.connection,
           unirest = this.dependencies.unirest,
-          email = this.dependencies.userinfo.email,
-          link = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/mealplans/" +
-                 "generate?timeFrame=day" +
-                 "&targetCalories=" + this.dependencies.userinfo.targetCalories +
-                 "&diet=" + this.dependencies.userinfo.dietType +
-                 "&exclude=" + encodeURI(this.dependencies.userinfo.restrictions);
+          email = this.dependencies.userinfo.email;
 
-		unirest.get(link)
-		.header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
-		.end(function (result) {
-		  for (let i = 0; i < result.body.meals.length; i++)
-		  {
-		    addNewMeal(result.body.meals[i], email, connection, function(){});
-		  }
-		});
+    connection.query(`DELETE FROM UserMeal WHERE email='${email}'`);
 
+    // API endpoint for getting new mealplan
+    const endpoint = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/mealplans/" +
+      "generate?timeFrame=week" +
+      "&targetCalories=" + this.dependencies.userinfo.targetCalories +
+      "&diet=" + this.dependencies.userinfo.dietType +
+      "&exclude=" + encodeURI(this.dependencies.userinfo.restrictions);
 
-		// Ingredients extraction, extracts the ingredients from each index of meals
-    // which is is a list of recipe IDs returned by callback function (getRecipesFor)
+    // Define callback functions for getting nutrition/price info
     let recipeCallback = function(recipes)
     {
-      let mealplan = [];
-      let getDinner = function(){
-        getMealFromCache(recipes[2].mrid, connection, function(result)
-        {
-          if (result.length > 0)
-          {
-            mealplan.push(result[0]);
-            callback(mealplan);
-          }
-          else
-          {
-            getFoodInfo(recipes[2].mrid, unirest, function(results){
-              results["type"] = "dinner";
-              addMealToCache(results, connection);
-              mealplan.push(results);
-              callback(mealplan);
-            });
-          }
+      checkForExpiredMeals(recipes, 0, connection, new Set(), function(expired){
+        connection.query(`SELECT * FROM UserMeal WHERE email='${email}'`,(e,r)=>{
+          let numberOfMealsToReplace = 21 - r.length;
+          replaceExpiredMeals([], numberOfMealsToReplace, email, connection, function(mealsToAdd){
+            assignMealsToUser(mealsToAdd, 0, email, connection, function(){
+              getMealsInformation(recipes, 0, connection, unirest, [], callback);
+            }, 7 - mealsToAdd.length);
+          });
         });
-      };
-      let getLunch = function(){
-        getMealFromCache(recipes[1].mrid, connection, function(result)
-        {
-          if (result.length > 0)
-          {
-            mealplan.push(result[0]);
-            getDinner();
-          }
-          else
-          {
-            getFoodInfo(recipes[1].mrid, unirest, function(results){
-              results["type"] = "lunch";
-              addMealToCache(results, connection);
-              mealplan.push(results);
-              getDinner();
-            });
-          }
-        });
-      };
-      let getBreakfast = function(){
-        getMealFromCache(recipes[0].mrid, connection, function(result)
-        {
-          if (result.length > 0)
-          {
-            mealplan.push(result[0]);
-            getLunch();
-          }
-          else
-          {
-            getFoodInfo(recipes[0].mrid, unirest, function(results){
-              results["type"] = "breakfast";
-              addMealToCache(results, connection);
-              mealplan.push(results);
-              getLunch();
-            });
-          }
-        });
-
-      };
-      getBreakfast();
+      });
     };
-		getRecipesFor(email, connection, recipeCallback);
+
+    // Check for existing meal plan
+    connection.query(`SELECT * FROM UserMeal m WHERE m.email='${email}';`, function(err,res){
+      if (err) throw err;
+      if (res.length > 0)
+      {
+        getRecipesFor(email, connection, recipeCallback);
+      }
+      else
+      {
+        unirest.get(endpoint)
+          .header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
+          .end(function (result) {
+            const meals = [];
+            for (let item of result.body.items)
+              meals.push(JSON.parse(item.value));
+            assignMealsToUser(meals, 0, email, connection, function(err){
+              if (err)
+                throw err;
+              let q = `SELECT * FROM UserMeal WHERE email=${email}`;
+              console.log(q);
+              connection.query(q,(e,res)=>{console.log(res)});
+              getRecipesFor(email, connection, recipeCallback);
+            });
+          });
+      }
+    });
 	};
 
+	function checkForExpiredMeals(meals, current, connection, expired, callback)
+  {
+    if (current >= meals.length || meals.length === 0)
+      return callback(expired);
+    else
+    {
+      let now = new Date();
+      if (Date.parse(meals[current].expire) - now <= 0)
+      {
+        expired.add(meals[current].index);
+        const sql = `DELETE FROM UserMeal WHERE email='${meals[current].email}' AND mid=${meals[current].mid}`;
+        console.log(sql);
+        connection.query(sql, function(err){
+          if (err) throw err;
+          current++;
+          if (current >= meals.length)
+            callback(expired);
+          else
+            checkForExpiredMeals(meals, current, connection, expired, callback);
+        });
+      }
+      else
+      {
+        current++;
+        checkForExpiredMeals(meals, current, connection, expired, callback);
+      }
+    }
+  }
+
+  function replaceExpiredMeals(meals, expired, email, connection, callback)
+  {
+    if (expired === 0)
+      callback(meals);
+    else
+    {
+      connection.query(`SELECT * FROM MealEntry WHERE type='breakfast'`,function(err, res1){
+        meals.push(choose(res1));
+        connection.query(`SELECT * FROM MealEntry WHERE type='lunch'`, function(err, res2){
+          meals.push(choose(res2));
+          connection.query(`SELECT * FROM MealEntry WHERE type='dinner'`, function(err, res3) {
+            meals.push(choose(res3));
+            expired--;
+            replaceExpiredMeals(meals, expired, email, connection, callback);
+          });
+        })
+      });
+    }
+  }
+
+  function choose(array)
+  {
+    return array[Math.floor(Math.random()*array.length)];
+  }
+
+  MealsApi.prototype.replaceMeal = function(dayIndex, type, callback)
+  {
+  };
+
+	function getMealsInformation(meals, current, connection, unirest, mealplan, callback)
+  {
+    const mealTypes = ["breakfast", "lunch", "dinner"];
+    getMealFromCache(meals[current].mid, connection, function(result)
+    {
+      if (result.length > 0)
+      {
+        mealplan.push(result[0]);
+        current++;
+        if (current >= meals.length)
+          callback(mealplan);
+        else
+          getMealsInformation(meals, current, connection, unirest, mealplan, callback);
+      }
+      else
+      {
+        getFoodInfo(meals[current].mid, unirest, function(result){
+          result["type"] = mealTypes[current % 3];
+          console.log(result);
+          addMealToCache(result, connection);
+          mealplan.push(result);
+          current++;
+          if (current >= meals.length)
+            callback(mealplan);
+          else
+            getMealsInformation(meals, current, connection, unirest, mealplan, callback);
+        });
+      }
+    });
+  }
+
+  /**
+   * Add meal information to MealEntry table for future use. This helps
+   * limit API calls by pulling foods from a cache.
+   */
 	function addMealToCache(food_data, connection, callback=()=>{})
   {
     connection.query(`INSERT into MealEntry(mid, title, type, price, imagelink, calories, protein, carbs, fats) 
@@ -188,6 +281,9 @@
       callback);
   }
 
+  /**
+   * Try to get meal information from cache with matching mid (meal id).
+   */
   function getMealFromCache(meal_id, connection, callback=()=>{})
   {
     connection.query(`SELECT * FROM MealEntry m WHERE m.mid=${meal_id};`, function(err, result, fields){

@@ -15,6 +15,12 @@ const connection = mysql.createConnection({
 connection.connect(function(err){
   if(!err) {
     console.log("Database is connected");
+//     connection.query(`CREATE TABLE UserMeal (
+//   email varchar(255) NOT NULL,
+//   mid int NOT NULL,
+//   expire varchar(255) NOT NULL,
+//   mindex int NOT NULL
+// )`,(e,r)=>{if (e)throw(e);console.log(r);});
   } else {
     console.log("Error connecting database");
   }
@@ -23,8 +29,8 @@ connection.connect(function(err){
 // iDiet node modules
 let mockuser = {"email" : "josephbarbosaa@gmail.com",
                  "targetCalories" : 2000,
-                 "dietType" : "vegetarian",
-                 "restrictions" : "shellfish,olives"};
+                 "dietType" : "",
+                 "restrictions" : ""};
 
 const mealApi = require('./user/mealsapi.js'),
       meals = mealApi.create({"connection": connection,
@@ -85,9 +91,10 @@ router.get('/', (req, res) => {
 // Temporary route for bypassing login
 router.get('/home', (req, res) => {
   req.session.user = {id: "anon@gmail.com", password: "password"};
-  meals.generateDailyMeals(function(mealplan){
+  meals.generateMealPlan(function(mealplan){
     console.log("Meal Plan:\n");
     console.log(mealplan);
+    console.log(mealplan.length);
   });
   return res.render('pages/home')
 });
