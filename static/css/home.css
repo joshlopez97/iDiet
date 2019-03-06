@@ -11,7 +11,7 @@
 {
   display:inline-block;
   position: relative;
-  width: 30%;
+  width: 29%;
   margin: calc(10% / 6);
 }
 
@@ -37,10 +37,16 @@
   font-size: 8pt;
 }
 
+.date-title
+{
+  margin: 20px 0 0;
+  padding: 0 20px;
+}
+
 @media (min-width: 600px) {
   .meal-wrapper
   {
-    margin: calc(10% / 4);
+    /*margin: calc(10% / 4);*/
   }
   .meal-title
   {
@@ -59,13 +65,15 @@
   max-width:90%;
   margin: auto;
 }
-.meal-row
+.meals
 {
   position: absolute;
   top: 180px;
-  height: 100px;
-  width: 85%;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: justify;
+  width: 100%;
+}
+.meal-row
+{
+  height: 250px;
+  width: 95%;
+  margin: auto;
 }

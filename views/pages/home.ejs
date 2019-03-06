@@ -10,43 +10,50 @@
 <% include ../partials/header %>
 <div class="homepage-wrapper">
     <h1>Hello John!</h1>
-    <h4>Your meals today are:</h4>
+    <h4>Your meals this week are:</h4>
 </div>
-<div class="meal-row">
-    <div class="meal-wrapper">
-        <div class="meal-holder">
-            <img class="thumbnail" src="/img/fruit_salad.jpg">
-            <div class="meal-caption">
-                <div class="meal-title">Fruit Salad</div>
-                <div class="meal-info">
-                    <div id="calories"><b>Calories:</b> 400</div>
-                    <div id="cost"><b>Cost:</b> $8</div>
+<div class="meals">
+    <% for (let i = 0; i < mealplan.length; i+=3) { %>
+    <h5 class="date-title"><%- dates[i / 3] %></h5>
+        <div class="meal-row">
+            <div class="meal-wrapper">
+                <div class="meal-holder">
+                    <img class="thumbnail" src="<%- mealplan[i].imagelink%>">
+                    <div class="meal-caption">
+                        <div class="meal-title"><%- mealplan[i].title %></div>
+                        <div class="meal-info">
+                            <div id="calories"><b>Calories:</b> <%- mealplan[i].calories %></div>
+                            <div id="cost"><b>Cost:</b> <%- mealplan[i].price %></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="meal-wrapper">
+                <div class="meal-holder">
+                    <img class="thumbnail" src="<%- mealplan[i+1].imagelink%>">
+                    <div class="meal-caption">
+                        <div class="meal-title"><%- mealplan[i+1].title %></div>
+                        <div class="meal-info">
+                            <div id="calories"><b>Calories:</b> <%- mealplan[i+1].calories %></div>
+                            <div id="cost"><b>Cost:</b> <%- mealplan[i+1].price %></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="meal-wrapper">
+                <div class="meal-holder">
+                    <img class="thumbnail" src="<%- mealplan[i+2].imagelink%>">
+                    <div class="meal-caption">
+                        <div class="meal-title"><%- mealplan[i+2].title %></div>
+                        <div class="meal-info">
+                            <div id="calories"><b>Calories:</b> <%- mealplan[i+2].calories %></div>
+                            <div id="cost"><b>Cost:</b> <%- mealplan[i+2].price %></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div><div class="meal-wrapper">
-        <div class="meal-holder">
-            <img class="thumbnail" src="/img/avocado_turkey_club_sandwich.jpg">
-            <div class="meal-caption">
-                <div class="meal-title">Avocado Turkey Club Sandwich</div>
-                <div class="meal-info">
-                    <div id="calories"><b>Calories:</b> 400</div>
-                    <div id="cost"><b>Cost:</b> $10</div>
-                </div>
-            </div>
-        </div>
-    </div><div class="meal-wrapper">
-        <div class="meal-holder">
-            <img class="thumbnail" src="/img/spaghetti.jpg">
-            <div class="meal-caption">
-                <div class="meal-title">Spaghetti</div>
-                <div class="meal-info">
-                    <div id="calories"><b>Calories:</b> 500</div>
-                    <div id="cost"><b>Cost:</b> $12</div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <% } %>
 </div>
 </body>
 

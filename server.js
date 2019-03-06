@@ -95,8 +95,18 @@ router.get('/home', (req, res) => {
     console.log("Meal Plan:\n");
     console.log(mealplan);
     console.log(mealplan.length);
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          formattedDates = [];
+    for (let i = 0; i < 7; i++) {
+      let d = new Date();
+      d.setHours(24 * i, 0, 0, 0);
+      if (i === 0)
+        formattedDates.push("Today, " + d.toLocaleDateString("en-US"));
+      else
+        formattedDates.push(days[d.getDay()] + ", " + d.toLocaleDateString("en-US"));
+    }
+    return res.render('pages/home', {'mealplan': mealplan, 'dates': formattedDates})
   });
-  return res.render('pages/home')
 });
 
 // Start page
