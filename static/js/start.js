@@ -64,12 +64,14 @@ function hideLogin()
 
     // Hide login screen
     logo.removeClass("login-open");
+    logo.removeClass("im");
     logo.addClass("login-close");
     setTimeout(function() {
       fh.css('display', 'none');
     }, 700);
 
     fh.removeClass("active");
+    fh.removeClass("im");
     fh.addClass("inactive");
     $("#login-btn").click(showLogin);
   }

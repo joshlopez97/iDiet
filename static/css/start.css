@@ -23,6 +23,11 @@
   display:block;
   animation: moveup 0.7s linear forwards;
 }
+.form-holder.active.im {
+  display:block;
+  animation: none;
+  transform: translateY(-100%);
+}
 .form-holder.inactive {
   display:block;
   animation: movedown 0.7s linear forwards;
@@ -69,6 +74,10 @@
 /* Logo animation when login form opens */
 .logo.login-open {
   animation: logo-min 0.7s linear forwards;
+}
+.logo.login-open.im {
+  animation: none;
+  transform: translate(-50%, -200%) scale(0.8);
 }
 @keyframes logo-min {
   from {
