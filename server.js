@@ -85,7 +85,10 @@ router.get('/', (req, res) => {
 // Temporary route for bypassing login
 router.get('/home', (req, res) => {
   req.session.user = {id: "anon@gmail.com", password: "password"};
-  meals.generateDailyMeals(function(){});
+  meals.generateDailyMeals(function(mealplan){
+    console.log("Meal Plan:\n");
+    console.log(mealplan);
+  });
   return res.render('pages/home')
 });
 

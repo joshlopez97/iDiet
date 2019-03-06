@@ -15,7 +15,7 @@ To set up iDiet for local development:
 and then go to http://localhost:5000 to view the application.
 
 ## MySQL Database Schema
-Currently, this is the generic schema for iDiet accounts:
+iDiet accounts:
 - Email: User's email used to sign in
 - UserPassword: Chosen password used to sign in (will be replaced with PasswordHash)
 - FirstName: User's first name
@@ -33,6 +33,19 @@ CREATE TABLE Account (
   Weight int NOT NULL,
   Age int NOT NULL,
   Allergies varchar(255)
+);
+```
+Meal Entries cached from API
+```
+CREATE TABLE MealEntry (
+  mid int UNIQUE NOT NULL,
+  title varchar(255) NOT NULL,
+  type varchar(32) NOT NULL,
+  price varchar(10),
+  calories int,
+  protein int,
+  carbs int,
+  fats int
 );
 ```
 
