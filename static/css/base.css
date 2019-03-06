@@ -87,7 +87,7 @@ a {
   background: transparent;
   color: white;
   padding: 0 10px;
-  font-size: 15pt;
+  font-size: 14pt;
   border: none;
   cursor: pointer;
   height: unset;
@@ -114,7 +114,7 @@ a {
 .sidebar {
   position: fixed;
   height: 100%;
-  width: 185px;
+  width: 195px;
   left: -325px;
   top: 61px;
   background: #2c6547;

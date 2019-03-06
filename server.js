@@ -90,6 +90,12 @@ router.get('/', (req, res) => {
 
 // Temporary route for bypassing login
 router.get('/home', (req, res) => {
+  let fitbit_key = req.query.code;
+  if (typeof fitbit_key !== 'undefined')
+  {
+    console.log(fitbit_key);
+    fitbit.login(fitbit_key);
+  }
   req.session.user = {id: "anon@gmail.com", password: "password"};
   meals.generateMealPlan(function(mealplan){
     console.log("Meal Plan:\n");
@@ -105,7 +111,7 @@ router.get('/home', (req, res) => {
       else
         formattedDates.push(days[d.getDay()] + ", " + d.toLocaleDateString("en-US"));
     }
-    return res.render('pages/home', {'mealplan': mealplan, 'dates': formattedDates})
+    return res.render('pages/home', {'mealplan': mealplan, 'dates': formattedDates});
   });
 });
 

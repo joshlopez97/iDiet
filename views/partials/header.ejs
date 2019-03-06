@@ -1,36 +1,42 @@
 <nav class="navbar" id="navbar-main">
-  <ul class="navbar-list">
-    <li class="navbar-brand">
-      <a href="/">
-        <img id="logo" src="/img/icon.png" alt="iDiet"/>
-      </a>
-    </li>
-    <li class="sidebar-mobile-icon-holder">
-      <div class="icon-wrapper">
-        <div class="sidebar-button"></div>
-        <div class="circle icon">
-          <span class="line top"></span>
-          <span class="line middle"></span>
-          <span class="line bottom"></span>
-        </div>
-      </div>
-    </li>
-  </ul>
+    <ul class="navbar-list">
+        <li class="navbar-brand">
+            <a href="/">
+                <img id="logo" src="/img/icon.png" alt="iDiet"/>
+            </a>
+        </li>
+        <li class="sidebar-mobile-icon-holder">
+            <div class="icon-wrapper">
+                <div class="sidebar-button"></div>
+                <div class="circle icon">
+                    <span class="line top"></span>
+                    <span class="line middle"></span>
+                    <span class="line bottom"></span>
+                </div>
+            </div>
+        </li>
+    </ul>
 </nav>
-<div class = 'side sidebar'>
-  <ul class='side sidenav-list'>
-    <li class='side sidenav-holder'>
-      <button class="navbtn" id="dash-btn" onclick="location.href='/';">My Diet Plan</button>
-    </li>
-    <li class='side sidenav-holder'>
-      <button class="navbtn" id="profile-btn" onclick="location.href='/profile';">Profile</button>
-    </li>
-    <li class='side sidenav-holder'>
-      <button class="navbtn" id="logout-btn" onclick="location.href='/logout';">Logout</button>
-    </li>
-  </ul>
+<div class='side sidebar'>
+    <ul class='side sidenav-list'>
+        <li class='side sidenav-holder'>
+            <button class="navbtn" id="dash-btn" onclick="location.href='/';">My Diet Plan</button>
+        </li>
+        <li class='side sidenav-holder'>
+            <button class="navbtn" id="profile-btn" onclick="location.href='/profile';">Profile</button>
+        </li>
+        <li class='side sidenav-holder'>
+            <button class="navbtn" id="logout-btn" onclick="location.href='/logout';">Logout</button>
+        </li>
+        <li class='side sidenav-holder'>
+            <button class="navbtn" id="fitbit-btn"
+                    onclick="location.href='https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=22DK39&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fhome&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=604800';">
+                Connect FitBit
+            </button>
+        </li>
+    </ul>
 </div>
 <div class="unfocused"></div>
 <script type="text/javascript"
-  src="/js/base.js">
+        src="/js/base.js">
 </script>

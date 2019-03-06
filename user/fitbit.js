@@ -1,17 +1,5 @@
 (function(){
 
-  // connecting MYSQL database, taken from mealsapi.js code
-  const mysql = require('mysql');
-  const connection = mysql.createConnection({
-    host: 'idiet.cqywkz4otd3h.us-east-2.rds.amazonaws.com',
-    user: 'idiet',
-    password: '1a2b3c4d5e',
-    database: 'idiet'
-  });
-
-  // unirest needed for connection to fitbit api
-  const unirest = require('unirest');
-
   // definition of fitbit for use in server.js
   function Fitbit(dependencies) {
     this.dependencies = dependencies;
@@ -19,16 +7,28 @@
   }
 
   // method for logging in a fitbit account
-  Fitbit.prototype.login = function(username, password) {
+  Fitbit.prototype.login = function(access_key) {
     // post for getting access token for a specified user
-    unirest.post("https://FitbitAPIdimashirokovV1.p.rapidapi.com/getAccessToken")
-    .header("X-RapidAPI-Key", "SIGN-UP-FOR-KEY")
+    this.dependencies.unirest.post("https://api.fitbit.com/oauth2/token")
     .header("Content-Type", "application/x-www-form-urlencoded")
-    .send("clientId=USERNAME_WILL_GO_HERE")
-    .send("code=ACCESS_GRANT_CODE")
-    .send("clientSecret=PASSWORD_WILL_GO_HERE")
+    .header("Authorization", "Basic MjJESzM5OjE3YTFmOTkyZjRjZTBhNmQ2ZWZiNzJlMDYyNzQxMTZk")
+    .send("clientId=22DK39")
+    .send("grant_type=authorization_code")
+    .send(`code=${access_key}`)
+    .send("redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fhome")
     .end(function (result) {
-      console.log(result.status, result.headers, result.body);
+      if (result.status === 200)
+      {
+        console.log("FitBit Login success.")
+        console.log(`Obtained access_token '${result.body.access_token}'`)
+        this.access_token = result.body.access_token;
+        this.logged_in = true;
+      }
+      else
+      {
+        console.log("FitBit Login failed.");
+        console.log(result.status, result.body);
+      }
     });
     // IF LOGIN IS SUCCESSFUL
     // SET logged_in to true
@@ -46,7 +46,7 @@
       // RETURN SOME ERROR MESSAGE  
     }
     return 0;
-  }
+  };
 
   // method for getting distance travelled for certain duration
   Fitbit.prototype.distance = function(duration) {
@@ -57,7 +57,7 @@
       // RETURN SOME ERROR MESSAGE
     }
     return 0;
-  }
+  };
 
   exports.create = function(dependencies) {
     return new Fitbit(dependencies);
