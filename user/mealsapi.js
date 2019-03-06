@@ -129,8 +129,6 @@
           unirest = this.dependencies.unirest,
           email = this.dependencies.userinfo.email;
 
-    connection.query(`DELETE FROM UserMeal WHERE email='${email}'`);
-
     // API endpoint for getting new mealplan
     const endpoint = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/mealplans/" +
       "generate?timeFrame=week" +
