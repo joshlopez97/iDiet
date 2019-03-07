@@ -28,12 +28,12 @@ let mockuser = {"email" : "josephbarbosaa@gmail.com",
                  "dietType" : "",
                  "restrictions" : ""};
 
-const mealApi = require('./user/mealsapi.js'),
+const mealApi = require('./apis/mealsapi.js'),
       meals = mealApi.create({"connection": connection,
                               "unirest": unirest,
                               "userinfo": mockuser});
 
-const fitbitApi = require('./user/fitbit.js'),
+const fitbitApi = require('./apis/fitbit.js'),
       fitbit = fitbitApi.create({"connection":connection,
                                  "unirest": unirest});
       
