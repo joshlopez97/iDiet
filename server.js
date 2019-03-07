@@ -75,11 +75,6 @@ router.get('/', (req, res) => {
   if (req.session && req.session.user)
   {
     console.log(req.session.user);
-    // connection.query(`DELETE FROM UserMeal WHERE email='${req.session.user.id}'`,
-    //   function(e,r){
-    //     if(e) throw e;
-    //     console.log(r);
-    //   });
     return res.render('pages/home', {"email": req.session.user.id});
   }
   else

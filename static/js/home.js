@@ -6,9 +6,10 @@ $(document).ready(function(){
     fixHeights();
   }, 500);
   populateMealPlan();
-  function populateMealPlan()
+  function populateMealPlan(anim=null)
   {
-    let anim = addLoader();
+    if (anim === null)
+      anim = addLoader();
     let dindex = [];
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
       formattedDates = [];
@@ -51,8 +52,8 @@ $(document).ready(function(){
     let animation = addLoader();
     $.get("/api/create/meals?email=" + email, function(data){
       console.log(data);
-      populateMealPlan();
-      removeLoader(animation);
+      populateMealPlan(animation);
+      callback();
     });
   }
 
@@ -74,6 +75,10 @@ $(document).ready(function(){
           ell.innerHTML += ".";
       },200);
     }
+    else
+    {
+      console.log("loader already exists");
+    }
   }
 
   function removeLoader(animation)
@@ -84,7 +89,11 @@ $(document).ready(function(){
 
   function addToHomepage(data, date_title, current, callback)
   {
-    $(`<h5 class="date-title">${date_title}</h5><div id='meal${current}' class='meal-row'></div>`).insertBefore(".loader");
+    let row = $(`<h5 class="date-title">${date_title}</h5><div id='meal${current}' class='meal-row'></div>`);
+    if ($(".loader").length === 0)
+      $(".meals").append(row);
+    else
+      row.insertBefore(".loader");
     let mealEntries = "";
     for (let i = 0; i < 3; i++) {
       if (data[i].imagelink === "undefined")

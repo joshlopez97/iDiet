@@ -3,6 +3,7 @@
  * users, store meals plans in the SQL database, and generate price/nutritional information.
  */
 (function() {
+  const sqlstr = require('sqlstring');
 
   /**
    * This constructor creates a new MealsApi object with the provided dependencies.
@@ -19,6 +20,7 @@
    */
 	function getRecipesFor(email, connection, callback)
 	{
+
 		connection.query(`SELECT * FROM UserMeal m WHERE m.email = '${email}'`, function(error, results, fields){
 			return callback(results);
 		});
@@ -84,6 +86,9 @@
             foodData["price"] = "$7.69";
             console.log("ERROR:\n");
             console.log(results.body)
+          }
+          for (let key in foodData) {
+            foodData[key] = sqlstr.escape(foodData[key]);
           }
           callback(foodData);
         });
@@ -252,7 +257,7 @@
     }
     else
     {
-      const mealTypes = ["breakfast", "lunch", "dinner"];
+      const mealTypes = ["'breakfast'", "'lunch'", "'dinner'"];
       getMealFromCache(meals[current].mid, connection, function(result)
       {
         if (result.length > 0)
@@ -288,7 +293,7 @@
 	function addMealToCache(food_data, connection, callback=()=>{})
   {
     let sql = `INSERT into MealEntry(mid, title, type, price, imagelink, calories, protein, carbs, fats, link, slink, vegetarian, vegan, glutenfree, dairyfree, ketogenic) 
-    values(${food_data.mid},'${food_data.title}','${food_data.type}','${food_data.price}','${food_data.imagelink}',${food_data.calories},${food_data.protein},${food_data.carbs},${food_data.fats},'${food_data.link}','${food_data.slink}',${food_data.vegetarian},${food_data.vegan},${food_data.glutenfree},${food_data.dairyfree},${food_data.ketogenic});`;
+    values(${food_data.mid},${food_data.title},${food_data.type},${food_data.price},${food_data.imagelink},${food_data.calories},${food_data.protein},${food_data.carbs},${food_data.fats},${food_data.link},${food_data.slink},${food_data.vegetarian},${food_data.vegan},${food_data.glutenfree},${food_data.dairyfree},${food_data.ketogenic});`;
     console.log(sql)
     connection.query(sql,
       function(err){
