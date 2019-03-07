@@ -34,6 +34,7 @@
 	{
     let foodData = {};
     foodData["mid"] = meal_id;
+    console.log(`Getting info for ${meal_id}`)
 		unirest.get(`https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/${meal_id}/information?includeNutrition=true`)
 		.header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
 		.end(function(results) {
@@ -268,7 +269,6 @@
         {
           getFoodInfo(meals[current].mid, unirest, function(result){
             result["type"] = mealTypes[current % 3];
-            console.log(result);
             addMealToCache(result, connection);
             mealplan.push(result);
             current++;
@@ -288,9 +288,14 @@
    */
 	function addMealToCache(food_data, connection, callback=()=>{})
   {
-    connection.query(`INSERT into MealEntry(mid, title, type, price, imagelink, calories, protein, carbs, fats, link, slink, vegetarian, vegan, glutenfree, dairyfree, ketogenic) 
-    values(${food_data.mid},'${food_data.title}','${food_data.type}','${food_data.price}','${food_data.imagelink}',${food_data.protein},${food_data.calories},${food_data.carbs},${food_data.fats},${food_data.link},${food_data.slink},${food_data.vegetarian},${food_data.vegan},${food_data.glutenfree},${food_data.dairyfree},${food_data.ketogenic});`,
-      callback);
+    let sql = `INSERT into MealEntry(mid, title, type, price, imagelink, calories, protein, carbs, fats, link, slink, vegetarian, vegan, glutenfree, dairyfree, ketogenic) 
+    values(${food_data.mid},'${food_data.title}','${food_data.type}','${food_data.price}','${food_data.imagelink}',${food_data.protein},${food_data.calories},${food_data.carbs},${food_data.fats},'${food_data.link}','${food_data.slink}',${food_data.vegetarian},${food_data.vegan},${food_data.glutenfree},${food_data.dairyfree},${food_data.ketogenic});`;
+    console.log(sql)
+    connection.query(sql,
+      function(err){
+        if (err) throw err;
+        callback();
+      });
   }
 
   /**

@@ -5,6 +5,9 @@
     <% include ../partials/head %>
     <link rel="stylesheet" type="text/css"
           href="/css/home.css">
+    <script type="text/javascript"
+            src="/js/home.js">
+    </script>
 </head>
 <body>
 <% include ../partials/header %>
@@ -54,6 +57,7 @@
         </div>
     <% } %>
 </div>
+<input id="email" type="hidden" value="<%- email %>">
 </body>
 
 </html>

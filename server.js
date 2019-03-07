@@ -15,24 +15,6 @@ const connection = mysql.createConnection({
 connection.connect(function(err){
   if(!err) {
     console.log("Database is connected");
-//     connection.query(`CREATE TABLE MealEntry (
-//   mid int UNIQUE NOT NULL,
-//   title varchar(255),
-//   type varchar(32) NOT NULL,
-//   price varchar(10),
-//   imagelink varchar(255),
-//   calories int,
-//   protein int,
-//   carbs int,
-//   fats int,
-//   link varchar(255),
-//   slink varchar(255),
-//   vegetarian bit,
-//   vegan bit,
-//   glutenfree bit,
-//   dairyfree bit,
-//   ketogenic bit
-// );`,(e,r)=>{if (e)throw(e);console.log(r);});
   } else {
     console.log("Error connecting database");
   }
@@ -108,23 +90,58 @@ router.get('/home', (req, res) => {
     console.log(fitbit_key);
     fitbit.login(fitbit_key);
   }
-  req.session.user = {id: "anon@gmail.com", password: "password"};
-  meals.generateMealPlan(function(mealplan){
-    console.log("Meal Plan:\n");
-    console.log(mealplan);
-    console.log(mealplan.length);
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-          formattedDates = [];
-    for (let i = 0; i < 7; i++) {
-      let d = new Date();
-      d.setHours(24 * i, 0, 0, 0);
-      if (i === 0)
-        formattedDates.push("Today, " + d.toLocaleDateString("en-US"));
-      else
-        formattedDates.push(days[d.getDay()] + ", " + d.toLocaleDateString("en-US"));
-    }
-    return res.render('pages/home', {'mealplan': mealplan, 'dates': formattedDates});
-  });
+  req.session.user = {id: mockuser.email, password: "password"};
+  // meals.generateMealPlan(function(mealplan){
+  //   console.log("Meal Plan:\n");
+  //   console.log(mealplan);
+  //   console.log(mealplan.length);
+  //   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+  //         formattedDates = [];
+  //   for (let i = 0; i < 7; i++) {
+  //     let d = new Date();
+  //     d.setHours(24 * i, 0, 0, 0);
+  //     if (i === 0)
+  //       formattedDates.push("Today, " + d.toLocaleDateString("en-US"));
+  //     else
+  //       formattedDates.push(days[d.getDay()] + ", " + d.toLocaleDateString("en-US"));
+  //   }
+    return res.render('pages/home', {'mealplan': [], 'dates': [], 'email': req.session.user.id});
+  // });
+});
+
+// API Endpoint to get meals for specified user and day
+router.get('/api/meals', (req, res) => {
+  const email = req.query.email,
+        day   = req.query.day;
+  res.setHeader('Content-Type', 'application/json');
+  if (typeof email !== 'undefined' && typeof day !== 'undefined')
+  {
+    const sql = `
+    SELECT me.*
+    FROM
+      MealEntry me
+    WHERE
+      me.mid IN (
+        SELECT
+          um.mid
+        FROM
+          UserMeal um
+        WHERE
+          um.email = '${email}'
+          AND um.mindex = ${day}
+      );
+    `;
+    console.log(sql);
+    connection.query(sql, function(err, result){
+      if (err) throw err;
+      console.log(result);
+      return res.json({"result": "success", "data": result});
+    });
+  }
+  else
+  {
+    return res.json({"result": "error", "data": {}});
+  }
 });
 
 // Start page
