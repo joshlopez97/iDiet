@@ -94,9 +94,17 @@ router.get('/home', (req, res) => {
   let fitbit_key = req.query.code;
   if (typeof fitbit_key !== 'undefined')
   {
-    console.log(fitbit_key);
-    fitbit.login(fitbit_key);
+    fitbit.login(fitbit_key, function(result) {
+
+        // Setting the targetCalories that will be passed in to mealsapi.
+        mockuser.targetCalories = mockuser.targetCalories+result.totalCalories;
+
+        // Debugging
+        console.log(result);
+        console.log(mockuser);
+    });
   }
+
   req.session.user = {id: mockuser.email, password: "password"};
   return res.render('pages/home', {'email': req.session.user.id});
 });
@@ -123,7 +131,7 @@ router.get('/api/meals', (req, res) => {
           AND um.mindex = ${day}
       );
     `;
-    console.log(sql);
+    //console.log(sql);
     connection.query(sql, function(err, result){
       if (err) throw err;
       return res.json({"result": "success", "data": result});
