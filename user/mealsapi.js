@@ -130,12 +130,11 @@
    * Generate meal plan for user.
    * @param callback Action to perform after meals are generated
    */
-	MealsApi.prototype.generateMealPlan = function(callback)
+	MealsApi.prototype.generateMealPlan = function (email, callback)
 	{
 	  // Define dependencies for inner functions
     const connection = this.dependencies.connection,
-          unirest = this.dependencies.unirest,
-          email = this.dependencies.userinfo.email;
+          unirest = this.dependencies.unirest;
 
     // API endpoint for getting new mealplan
     const endpoint = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/mealplans/" +

@@ -75,6 +75,11 @@ router.get('/', (req, res) => {
   if (req.session && req.session.user)
   {
     console.log(req.session.user);
+    // connection.query(`DELETE FROM UserMeal WHERE email='${req.session.user.id}'`,
+      function(e,r){
+        if(e) throw e;
+        console.log(r);
+      });
     return res.render('pages/home', {"email": req.session.user.id});
   }
   else
@@ -128,6 +133,34 @@ router.get('/api/meals', (req, res) => {
   {
     return res.json({"result": "error", "data": {}});
   }
+});
+
+router.get('/api/create/meals', (req, res) => {
+  const email = req.query.email;
+  res.setHeader('Content-Type', 'application/json');
+  if (typeof email !== 'undefined')
+  {
+    account.account_exists(email, function(result)
+    {
+      console.log(result);
+      if (result)
+      {
+        meals.generateMealPlan(email, function(mealplan)
+        {
+          return res.json({"result": "success", "data": mealplan});
+        });
+      }
+      else
+      {
+        return res.json({"result": "error", "reason": "account does not exist", "data": {}});
+      }
+    });
+  }
+  else
+  {
+    return res.json({"result": "error", "reason": "email not provided", "data": {}});
+  }
+
 });
 
 // Start page

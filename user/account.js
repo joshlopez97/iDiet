@@ -19,6 +19,18 @@
     }
   }
 
+  Account.prototype.account_exists = function(email, callback)
+  {
+    console.log(email);
+    this.options.connection.query(`SELECT * FROM Account WHERE Email = ?`,[email],
+      function(err, res){
+        if (err)
+          throw err;
+        console.log(res);
+        return callback(res.length > 0);
+      });
+  };
+
   Account.prototype.authenticate = function(email, password, callback) {
     console.log(`Authenticating ${email}`);
     this.options.connection.query(`SELECT * FROM Account WHERE Email = ?`, [email], function(error, results, fields){

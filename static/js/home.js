@@ -8,6 +8,7 @@ $(document).ready(function(){
   populateMealPlan();
   function populateMealPlan()
   {
+    let anim = addLoader();
     let dindex = [];
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
       formattedDates = [];
@@ -20,7 +21,7 @@ $(document).ready(function(){
       else
         formattedDates.push(days[d.getDay()] + ", " + d.toLocaleDateString("en-US"));
     }
-    getMeals(dindex, formattedDates, 0, $("#email").val(), ()=>{});
+    getMeals(dindex, formattedDates, 0, $("#email").val(), ()=>{removeLoader(anim)});
   }
 
   function getMeals(dindex, formattedDates, current, email, callback)
@@ -31,16 +32,59 @@ $(document).ready(function(){
     {
       let link = "/api/meals?email=" + email + "&day=" + dindex[current];
       $.get(link, function(resp){
-        addToHomepage(resp.data, formattedDates[current], dindex[current],function(){
-          getMeals(dindex, formattedDates,current+1, email, callback);
-        });
+        if (resp.result === "error" || resp.data.length === 0)
+        {
+          return generateMealPlan(email, callback);
+        }
+        else
+        {
+          addToHomepage(resp.data, formattedDates[current], dindex[current],function(){
+            getMeals(dindex, formattedDates,current+1, email, callback);
+          });
+        }
       });
     }
   }
 
+  function generateMealPlan(email, callback)
+  {
+    let animation = addLoader();
+    $.get("/api/create/meals?email=" + email, function(data){
+      console.log(data);
+      populateMealPlan();
+      removeLoader(animation);
+    });
+  }
+
+  function addLoader()
+  {
+    if ($(".loader").length === 0)
+    {
+      $(".meals").append(`
+      <div class="loader">
+        <div class="lds-circle"><div></div></div><br>
+        <div class="loader-text">CREATING MEAL PLAN<span id="lds-el">...</span></div>
+      </div>
+    `);
+      return setInterval(()=>{
+        let ell = $("#lds-el")[0];
+        if ( ell.innerHTML.length > 3 )
+          ell.innerHTML = "";
+        else
+          ell.innerHTML += ".";
+      },200);
+    }
+  }
+
+  function removeLoader(animation)
+  {
+    $(".loader").remove();
+    clearInterval(animation);
+  }
+
   function addToHomepage(data, date_title, current, callback)
   {
-    $(".meals").append(`<h5 class="date-title">${date_title}</h5><div id='meal${current}' class='meal-row'></div>`);
+    $(`<h5 class="date-title">${date_title}</h5><div id='meal${current}' class='meal-row'></div>`).insertBefore(".loader");
     let mealEntries = "";
     for (let i = 0; i < 3; i++) {
       if (data[i].imagelink === "undefined")
