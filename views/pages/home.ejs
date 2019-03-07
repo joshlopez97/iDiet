@@ -14,48 +14,8 @@
 <div class="homepage-wrapper">
     <h1>My Diet Plan</h1>
 </div>
+<!--This section is populated by client-side JS in /static/js/home.js-->
 <div class="meals">
-    <% for (let i = 0; i < mealplan.length; i+=3) { %>
-    <h5 class="date-title"><%- dates[i / 3] %></h5>
-        <div class="meal-row">
-            <div class="meal-wrapper">
-                <div class="meal-holder">
-                    <img class="thumbnail" src="<%- mealplan[i].imagelink%>">
-                    <div class="meal-caption">
-                        <div class="meal-title"><%- mealplan[i].title %></div>
-                        <div class="meal-info">
-                            <div id="calories"><b>Calories:</b> <%- mealplan[i].calories %></div>
-                            <div id="cost"><b>Cost:</b> <%- mealplan[i].price %></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="meal-wrapper">
-                <div class="meal-holder">
-                    <img class="thumbnail" src="<%- mealplan[i+1].imagelink%>">
-                    <div class="meal-caption">
-                        <div class="meal-title"><%- mealplan[i+1].title %></div>
-                        <div class="meal-info">
-                            <div id="calories"><b>Calories:</b> <%- mealplan[i+1].calories %></div>
-                            <div id="cost"><b>Cost:</b> <%- mealplan[i+1].price %></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="meal-wrapper">
-                <div class="meal-holder">
-                    <img class="thumbnail" src="<%- mealplan[i+2].imagelink%>">
-                    <div class="meal-caption">
-                        <div class="meal-title"><%- mealplan[i+2].title %></div>
-                        <div class="meal-info">
-                            <div id="calories"><b>Calories:</b> <%- mealplan[i+2].calories %></div>
-                            <div id="cost"><b>Cost:</b> <%- mealplan[i+2].price %></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <% } %>
 </div>
 <input id="email" type="hidden" value="<%- email %>">
 </body>

@@ -73,7 +73,7 @@ router.get('/', (req, res) => {
   if (req.session && req.session.user)
   {
     console.log(req.session.user);
-    return res.render('pages/home', {"mealplan":[], "dates":[]});
+    return res.render('pages/home', {"email": req.session.user.id});
   }
   else
   {
@@ -91,22 +91,7 @@ router.get('/home', (req, res) => {
     fitbit.login(fitbit_key);
   }
   req.session.user = {id: mockuser.email, password: "password"};
-  // meals.generateMealPlan(function(mealplan){
-  //   console.log("Meal Plan:\n");
-  //   console.log(mealplan);
-  //   console.log(mealplan.length);
-  //   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-  //         formattedDates = [];
-  //   for (let i = 0; i < 7; i++) {
-  //     let d = new Date();
-  //     d.setHours(24 * i, 0, 0, 0);
-  //     if (i === 0)
-  //       formattedDates.push("Today, " + d.toLocaleDateString("en-US"));
-  //     else
-  //       formattedDates.push(days[d.getDay()] + ", " + d.toLocaleDateString("en-US"));
-  //   }
-    return res.render('pages/home', {'mealplan': [], 'dates': [], 'email': req.session.user.id});
-  // });
+  return res.render('pages/home', {'email': req.session.user.id});
 });
 
 // API Endpoint to get meals for specified user and day
@@ -134,7 +119,6 @@ router.get('/api/meals', (req, res) => {
     console.log(sql);
     connection.query(sql, function(err, result){
       if (err) throw err;
-      console.log(result);
       return res.json({"result": "success", "data": result});
     });
   }
