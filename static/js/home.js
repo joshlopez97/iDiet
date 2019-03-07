@@ -52,6 +52,8 @@ $(document).ready(function(){
                           <div class="meal-title">${data[i].title}</div>
                           <div class="meal-info">
                               <div id="calories"><b>Calories:</b> ${data[i].calories}</div>
+                              <div id="protein"><b>Protein:</b> ${data[i].protein}g</div>
+                              <div id="calories"><b>Fat:</b> ${data[i].fats}g</div>
                               <div id="cost"><b>Cost:</b> ${data[i].price}</div>
                           </div>
                       </div>

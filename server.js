@@ -15,6 +15,8 @@ const connection = mysql.createConnection({
 connection.connect(function(err){
   if(!err) {
     console.log("Database is connected");
+    // connection.query("TRUNCATE TABLE MealEntry;",
+    //   (e,r)=>{if(e)throw(e);console.log(r);});
   } else {
     console.log("Error connecting database");
   }
