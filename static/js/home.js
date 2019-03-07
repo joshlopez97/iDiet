@@ -1,4 +1,10 @@
 $(document).ready(function(){
+  $(window).resize(function(){
+    fixHeights();
+  });
+  setInterval(function(){
+    fixHeights();
+  }, 500);
   populateMealPlan();
   function populateMealPlan()
   {
@@ -19,15 +25,12 @@ $(document).ready(function(){
 
   function getMeals(dindex, formattedDates, current, email, callback)
   {
-    console.log(dindex.length);
     if (dindex.length === 0 || current >= dindex.length)
       return callback();
     else
     {
       let link = "/api/meals?email=" + email + "&day=" + dindex[current];
-      console.log("GET '" + link + "'");
       $.get(link, function(resp){
-        console.log(resp.data);
         addToHomepage(resp.data, formattedDates[current], dindex[current],function(){
           getMeals(dindex, formattedDates,current+1, email, callback);
         });
@@ -38,13 +41,13 @@ $(document).ready(function(){
   function addToHomepage(data, date_title, current, callback)
   {
     $(".meals").append(`<h5 class="date-title">${date_title}</h5><div id='meal${current}' class='meal-row'></div>`);
+    let mealEntries = "";
     for (let i = 0; i < 3; i++) {
       if (data[i].imagelink === "undefined")
       {
         data[i].imagelink = "/img/default.png";
       }
-      $(`#meal${current}`)
-        .append(`
+      mealEntries += `
               <div class="meal-wrapper">
                   <div class="meal-holder" onclick="location.href='${data[i].slink}';">
                       <img class="thumbnail" src="${data[i].imagelink}">
@@ -54,13 +57,34 @@ $(document).ready(function(){
                               <div id="calories"><b>Calories:</b> ${data[i].calories}</div>
                               <div id="protein"><b>Protein:</b> ${data[i].protein}g</div>
                               <div id="calories"><b>Fat:</b> ${data[i].fats}g</div>
-                              <div id="cost"><b>Cost:</b> ${data[i].price}</div>
+                              <div id="cost">${data[i].price}</div>
                           </div>
                       </div>
                   </div>
               </div>
-      `);
+      `;
     }
+    $(`#meal${current}`).append(mealEntries).append(function(){setHeight($(this));});
     callback();
+  }
+
+  function fixHeights()
+  {
+    for (let row of $(".meal-row"))
+    {
+      setHeight($(row));
+    }
+  }
+
+  function setHeight(row)
+  {
+    let h = 0;
+    for (let mh of row.find(".meal-holder"))
+    {
+      let hc = $(mh).outerHeight();
+      if (hc > h)
+        h = hc;
+    }
+    row.height(h + 30);
   }
 });

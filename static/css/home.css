@@ -6,6 +6,10 @@
   width: calc(100% - 40px);
 }
 
+.homepage-header
+{
+  margin-bottom: 1em;
+}
 
 .meal-wrapper
 {
@@ -44,22 +48,6 @@
   padding: 0 20px;
 }
 
-@media (min-width: 600px) {
-  .meal-wrapper
-  {
-    /*margin: calc(10% / 4);*/
-  }
-  .meal-title
-  {
-    font-size: 12pt;
-  }
-
-  .meal-info
-  {
-    font-size: 9pt;
-  }
-}
-
 .thumbnail
 {
   display:block;
@@ -74,7 +62,32 @@
 }
 .meal-row
 {
-  height: 250px;
+  height: 275px;
   width: 95%;
   margin: auto;
+  border-bottom: 1px #bbb solid;
+}
+
+#cost
+{
+  text-align: center;
+  color: #39bd62;
+  font-weight: bold;
+  font-size: 11pt;
+}
+
+@media (min-width: 600px) {
+  .meal-row
+  {
+    height: 350px;
+  }
+  .meal-title
+  {
+    font-size: 12pt;
+  }
+
+  .meal-info
+  {
+    font-size: 9pt;
+  }
 }

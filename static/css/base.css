@@ -87,13 +87,13 @@ a {
   background: transparent;
   color: white;
   padding: 0 10px;
-  font-size: 14pt;
+  font-size: 12pt;
   border: none;
   cursor: pointer;
   height: unset;
   width: unset;
   text-align: center;
-  margin: 5px 10px;
+  margin: 5px 5px;
 }
 
 .navbtn:hover {
@@ -114,7 +114,7 @@ a {
 .sidebar {
   position: fixed;
   height: 100%;
-  width: 195px;
+  width: 175px;
   left: -325px;
   top: 61px;
   background: #2c6547;
