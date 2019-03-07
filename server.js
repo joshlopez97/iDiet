@@ -79,7 +79,7 @@ router.get('/', (req, res) => {
   if (req.session && req.session.user)
   {
     console.log(req.session.user);
-    return res.render('pages/home');
+    return res.render('pages/home', {"mealplan":[], "dates":[]});
   }
   else
   {
