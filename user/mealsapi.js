@@ -51,6 +51,13 @@
       }
       foodData["imagelink"] = results.body.image;
       foodData["title"] = results.body.title;
+      foodData["link"] = results.body.sourceUrl;
+      foodData["slink"] = results.body.spoonacularSourceUrl;
+      foodData["vegetarian"] = results.body.vegetarian;
+      foodData["glutenfree"] = results.body.glutenFree;
+      foodData["vegan"] = results.body.vegan;
+      foodData["dairyfree"] = results.body.dairyFree;
+      foodData["ketogenic"] = results.body.ketogenic;
 
       // Get and store price info
 		  let recipeStr = "";
@@ -69,7 +76,7 @@
         .end(function(results){
           const priceRegex = /(?:Cost per Serving: )(\$\d+\.\d\d)/;
           let res = priceRegex.exec(results.body);
-          if (res.length > 1)
+          if (res !== null && typeof res !== 'undefined' && res.length > 1)
             foodData["price"] = res[1];
           else
           {
@@ -239,33 +246,40 @@
 
 	function getMealsInformation(meals, current, connection, unirest, mealplan, callback)
   {
-    const mealTypes = ["breakfast", "lunch", "dinner"];
-    getMealFromCache(meals[current].mid, connection, function(result)
+    if (meals === null || typeof meals === "undefined" || meals.length === 0 || current >= meals.length)
     {
-      if (result.length > 0)
+      return callback();
+    }
+    else
+    {
+      const mealTypes = ["breakfast", "lunch", "dinner"];
+      getMealFromCache(meals[current].mid, connection, function(result)
       {
-        mealplan.push(result[0]);
-        current++;
-        if (current >= meals.length)
-          callback(mealplan);
-        else
-          getMealsInformation(meals, current, connection, unirest, mealplan, callback);
-      }
-      else
-      {
-        getFoodInfo(meals[current].mid, unirest, function(result){
-          result["type"] = mealTypes[current % 3];
-          console.log(result);
-          addMealToCache(result, connection);
-          mealplan.push(result);
+        if (result.length > 0)
+        {
+          mealplan.push(result[0]);
           current++;
           if (current >= meals.length)
             callback(mealplan);
           else
             getMealsInformation(meals, current, connection, unirest, mealplan, callback);
-        });
-      }
-    });
+        }
+        else
+        {
+          getFoodInfo(meals[current].mid, unirest, function(result){
+            result["type"] = mealTypes[current % 3];
+            console.log(result);
+            addMealToCache(result, connection);
+            mealplan.push(result);
+            current++;
+            if (current >= meals.length)
+              callback(mealplan);
+            else
+              getMealsInformation(meals, current, connection, unirest, mealplan, callback);
+          });
+        }
+      });
+    }
   }
 
   /**
@@ -274,8 +288,8 @@
    */
 	function addMealToCache(food_data, connection, callback=()=>{})
   {
-    connection.query(`INSERT into MealEntry(mid, title, type, price, imagelink, calories, protein, carbs, fats) 
-    values(${food_data.mid},'${food_data.title}','${food_data.type}','${food_data.price}','${food_data.imagelink}',${food_data.protein},${food_data.calories},${food_data.carbs},${food_data.fats});`,
+    connection.query(`INSERT into MealEntry(mid, title, type, price, imagelink, calories, protein, carbs, fats, link, slink, vegetarian, vegan, glutenfree, dairyfree, ketogenic) 
+    values(${food_data.mid},'${food_data.title}','${food_data.type}','${food_data.price}','${food_data.imagelink}',${food_data.protein},${food_data.calories},${food_data.carbs},${food_data.fats},${food_data.link},${food_data.slink},${food_data.vegetarian},${food_data.vegan},${food_data.glutenfree},${food_data.dairyfree},${food_data.ketogenic});`,
       callback);
   }
 

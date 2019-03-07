@@ -15,12 +15,24 @@ const connection = mysql.createConnection({
 connection.connect(function(err){
   if(!err) {
     console.log("Database is connected");
-//     connection.query(`CREATE TABLE UserMeal (
-//   email varchar(255) NOT NULL,
-//   mid int NOT NULL,
-//   expire varchar(255) NOT NULL,
-//   mindex int NOT NULL
-// )`,(e,r)=>{if (e)throw(e);console.log(r);});
+//     connection.query(`CREATE TABLE MealEntry (
+//   mid int UNIQUE NOT NULL,
+//   title varchar(255),
+//   type varchar(32) NOT NULL,
+//   price varchar(10),
+//   imagelink varchar(255),
+//   calories int,
+//   protein int,
+//   carbs int,
+//   fats int,
+//   link varchar(255),
+//   slink varchar(255),
+//   vegetarian bit,
+//   vegan bit,
+//   glutenfree bit,
+//   dairyfree bit,
+//   ketogenic bit
+// );`,(e,r)=>{if (e)throw(e);console.log(r);});
   } else {
     console.log("Error connecting database");
   }

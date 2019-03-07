@@ -35,17 +35,32 @@ CREATE TABLE Account (
   Allergies varchar(255)
 );
 ```
-Meal Entries cached from API
+Storing Meal Information from Spoonacular Nutrition API
 ```
 CREATE TABLE MealEntry (
   mid int UNIQUE NOT NULL,
-  title varchar(255) NOT NULL,
+  title varchar(255),
   type varchar(32) NOT NULL,
   price varchar(10),
+  imagelink varchar(255),
   calories int,
   protein int,
   carbs int,
-  fats int
+  fats int,
+  link varchar(255),
+  slink varchar(255),
+  vegetarian bit,
+  vegan bit,
+  glutenfree bit,
+  dairyfree bit,
+  ketogenic bit
+);
+
+CREATE TABLE UserMeal (
+  email varchar(255) NOT NULL,
+  mid int NOT NULL,
+  expire varchar(255) NOT NULL,
+  mindex int NOT NULL
 );
 ```
 
