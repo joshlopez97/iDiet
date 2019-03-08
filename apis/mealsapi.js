@@ -136,35 +136,65 @@
     }
   }
 
-
+  MealsApi.prototype.replaceMeal = function(email, mid, mindex, callback)
+  {
+    let connection = this.dependencies.connection;
+    connection.query(`SELECT * FROM MealEntry WHERE mid=?`, [mid], function(err,resp){
+      console.log(resp);
+      let replacedMealData = resp[0];
+      connection.query(`
+        SELECT * FROM MealEntry
+          WHERE
+            type = ?
+          AND mid NOT IN (
+            SELECT
+              d.mid
+            FROM
+              Dislikes d
+            WHERE
+              email = ?
+          );
+      `, [replacedMealData.type, email], function(err, resp){
+        let result = chooser(resp, replacedMealData.price, replacedMealData.budget, 1, [])[0];
+        connection.query(`UPDATE UserMeal SET mid=? WHERE email=? AND mindex=? AND mid=?`, [result.mid, email, mindex, mid],
+          function(err, resp){
+            if (err) throw err;
+            return callback(result);
+          });
+      });
+    });
+  };
 
   /**
    * Generate meal plan for user.
+   * @param email
    * @param callback Action to perform after meals are generated
    */
 	MealsApi.prototype.getMealPlan = function (email, callback)
 	{
 	  // Define dependencies for inner functions
     const connection = this.dependencies.connection,
-          unirest = this.dependencies.unirest;
+          unirest = this.dependencies.unirest,
+          account = this.dependencies.account;
 
     // Define callback functions for getting nutrition/price info
-    let recipeCallback = function(recipes)
+    let recipeCallback = function(meals)
     {
-      checkForExpiredMeals(recipes, 0, connection, new Set(), function(expired){
+      checkForExpiredMeals(meals, 0, connection, new Set(), function(expired){
         console.log(expired);
-        connection.query(`SELECT * FROM UserMeal WHERE email='${email}'`,(e,r)=>{
-          let numberOfMealsToReplace = 21 - r.length;
-          replaceExpiredMeals([], numberOfMealsToReplace, email, connection, function(mealsToAdd){
-            assignMealsToUser(mealsToAdd, 0, email, connection, function(){
-              getMealsInformation(recipes, 0, connection, unirest, [], callback);
-            }, 7 - mealsToAdd.length);
+        account.getTargetCaloriesAndBudget(email,
+          function(targetCalories, weeklyBudget) {
+            let numberOfMealsToReplace = 21 - expired.length;
+            replaceExpiredMeals(meals, [], targetCalories, weeklyBudget, numberOfMealsToReplace, email, connection, function (mealsToAdd) {
+              assignMealsToUser(mealsToAdd, 0, email, connection, function () {
+                getMealsInformation(meals, 0, connection, unirest, [], callback);
+              }, 7 - mealsToAdd.length);
+            });
           });
-        });
       });
     };
 
-    this.dependencies.account.calculate_calories(email,
+    account.getTargetCaloriesAndBudget(email,
       function(targetCalories){
         // Check for existing meal plan
         connection.query(`SELECT * FROM UserMeal m WHERE m.email='${email}';`, function(err,res){
@@ -187,8 +217,14 @@
       });
 	};
 
-  function chooser(choices, goalBudget, goalCalories, count, mealsNotAllowed=[]){
-    return Array.from(choices)
+  /**
+   * Function chooses (count) meals out of mealOptions array incorporating:
+   * 1.) How much cheaper the meal is than goalBudget
+   * 2.) How close in calories the meal is to goalCalories
+   * 3.) Meal cannot be in mealsNotAllowed
+   */
+  function chooser(mealOptions, goalBudget, goalCalories, count, mealsNotAllowed=[]){
+    return Array.from(mealOptions)
       .filter(function(choice){
         for (let meal of mealsNotAllowed)
           if (meal.mid === choice.mid)
@@ -297,23 +333,23 @@
   }
 
   /**
-   * Generates new set of meals and pushes into array named meals which is passed
+   * Generates new set of meals and pushes into array named mealsBuffer which is passed
    * into callback. numberOfMealsToAdd defines how many meals to replace
    */
-  function replaceExpiredMeals(meals, numberOfMealsToAdd, email, connection, callback)
+  function replaceExpiredMeals(meals, mealsBuffer, targetCalories, weeklyBudget, numberOfMealsToAdd, email, connection, callback)
   {
     if (numberOfMealsToAdd === 0)
-      callback(meals);
+      callback(mealsBuffer);
     else
     {
       connection.query(`SELECT * FROM MealEntry WHERE type='breakfast'`,function(err, res1){
-        meals.push(choose(res1));
+        mealsBuffer.push(chooser(res1, (weeklyBudget / 21), targetCalories / 3, 1, meals));
         connection.query(`SELECT * FROM MealEntry WHERE type='lunch'`, function(err, res2){
-          meals.push(choose(res2));
+          mealsBuffer.push(chooser(res2, (weeklyBudget / 21), targetCalories / 3, 1, meals));
           connection.query(`SELECT * FROM MealEntry WHERE type='dinner'`, function(err, res3) {
-            meals.push(choose(res3));
+            mealsBuffer.push(chooser(res3, (weeklyBudget / 21), targetCalories / 3, 1, meals));
             numberOfMealsToAdd--;
-            replaceExpiredMeals(meals, numberOfMealsToAdd, email, connection, callback);
+            replaceExpiredMeals(meals, mealsBuffer, targetCalories, weeklyBudget, numberOfMealsToAdd, email, connection, callback);
           });
         })
       });

@@ -15,7 +15,7 @@ To set up iDiet for local development:
 and then go to http://localhost:5000 to view the application.
 
 ## MySQL Database Schema
-iDiet accounts:
+iDiet Accounts:
 - Email: User's email used to sign in
 - UserPassword: Chosen password used to sign in (will be replaced with PasswordHash)
 - FirstName: User's first name
@@ -92,7 +92,7 @@ CREATE TABLE UserMeal (
   mindex int NOT NULL
 );
 ```
-FitBit Data
+FitBit Data:
 - email: email of iDiet account
 - accessKey: access_key needed to connect to FitBit Web API
 - caloriesBurned: number of calories burned in FitBit Account
@@ -105,6 +105,20 @@ CREATE TABLE FitBit (
   caloriesBurned int,
   steps int,
   distance int
+);
+```
+
+Liked and Disliked Meals:
+- email: email of iDiet account
+- mid: recipe ID of meal that was liked/disliked
+```
+CREATE TABLE Likes (
+  email varchar(255) NOT NULL,
+  mid int NOT NULL
+);
+CREATE TABLE Dislikes (
+  email varchar(255) NOT NULL,
+  mid int NOT NULL
 );
 ```
 

@@ -23,7 +23,6 @@
 .meal-holder
 {
   position: absolute;
-  cursor: pointer;
   left: 50%;
   transform: translateX(-50%);
   width: 80%;
@@ -73,6 +72,7 @@
 {
   text-align: center;
   font-size: 11pt;
+  margin-bottom: 8px;
 }
 
 .green-bold
@@ -85,6 +85,32 @@
 {
   color: #2c6547;
   font-weight: bold;
+}
+.like-icon-holder
+{
+  cursor: pointer;
+  position: absolute;
+  display: inline-block;
+  bottom: 0;
+  left: 5px;
+  z-index: 100;
+}
+.like-icon
+{
+  width: 17px;
+}
+.dislike-icon-holder
+{
+  cursor: pointer;
+  position: absolute;
+  display: inline-block;
+  bottom: -4px;
+  right: 5px;
+  z-index: 100;
+}
+.dislike-icon
+{
+  width: 17px;
 }
 
 @media (min-width: 600px) {

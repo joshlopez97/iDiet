@@ -17,12 +17,9 @@ connection.connect(function(err){
   if(!err) {
     console.log("Database is connected");
 //     connection.query(`
-// CREATE TABLE FitBit (
-//   email varchar(255) UNIQUE NOT NULL,
-//   accessKey varchar(255) NOT NULL,
-//   caloriesBurned int,
-//   steps int,
-//   distance int
+// CREATE TABLE Dislikes (
+//   email varchar(255) NOT NULL,
+//   mid int NOT NULL
 // );
 //     `,
 //       (e,r)=>{if(e)throw(e);console.log(r);});
@@ -39,6 +36,9 @@ let mockuser = {"email" : "joshlopez97@gmail.com",
 
 const accountModule = require('./user/account.js'),
       account = accountModule.create({"connection":connection});
+
+const preferencesModule = require('./user/preferences.js'),
+      preferences = preferencesModule.create({"connection":connection});
 
 const mealApi = require('./apis/mealsapi.js'),
       meals = mealApi.create({"connection": connection,
@@ -192,6 +192,45 @@ router.get('/api/create/meals', (req, res) => {
     return res.json({"result": "error", "reason": "email not provided", "data": {}});
   }
 
+});
+
+router.get('/api/like', (req, res) => {
+  const email  = req.query.email,
+        mid    = req.query.mid;
+  res.setHeader('Content-Type', 'application/json');
+  if (typeof email !== 'undefined' && typeof mid !== 'undefined')
+  {
+    preferences.likeMeal(email, mid, function(err, resp){
+      console.log(resp);
+      return res.json({"result": "success"});
+    });
+  }
+  else
+  {
+    return res.json({"result": "error"});
+  }
+});
+
+router.get('/api/dislike', (req, res) => {
+  const email  = req.query.email,
+        mid    = req.query.mid,
+        mindex = req.query.mindex;
+  res.setHeader('Content-Type', 'application/json');
+  if (typeof email !== 'undefined' && typeof mid !== 'undefined' && mindex !== 'undefined')
+  {
+    preferences.dislikeMeal(email, mid, mindex, function(err, resp){
+      console.log(resp);
+      meals.replaceMeal(email, mid, mindex, function(newMeal){
+        console.log(newMeal);
+        return res.json({"result": "success", "data":newMeal});
+      });
+    });
+
+  }
+  else
+  {
+    return res.json({"result": "error"});
+  }
 });
 
 // Start page

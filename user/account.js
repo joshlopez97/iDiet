@@ -23,9 +23,9 @@
   }
 
   /**
-   * Returns calculated daily calories, external function for Account module
+   * Returns calculated daily calories and weekly budget, external function for Account module
    */
-  Account.prototype.calculate_calories = function(email, callback)
+  Account.prototype.getTargetCaloriesAndBudget = function(email, callback)
   {
     return calculateCalories(email, this.dependencies.connection, callback);
   };
@@ -47,8 +47,8 @@
           SET DailyCalories=${calculatedCalories}
         WHERE Email='${email}';
       `, function(err, resp){
-        // Return calories back as callback parameter
-        callback(calculatedCalories);
+        // Return calories and budget back as callback parameter
+        callback(calculatedCalories, resp[0].WeeklyBudget);
       });
     });
   }
