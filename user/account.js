@@ -4,6 +4,10 @@
     this.dependencies = dependencies;
   }
 
+  /**
+   * Helper function converts height string (Ex: "5 ' 1")
+   * to int containing height in inches
+   */
   function convert_to_inches(height_string) {
     try {
       const heightRegex = /^([1-9]) ' ([0-9]|1[01])$/;
@@ -13,23 +17,41 @@
       return (feet * 12) + inches;
     }
     catch (exception) {
-      return 0;
+      console.log("Something went wrong converting height");
+      return -1;
     }
   }
 
   /**
-   * Calculates number of suggested daily calories
+   * Returns calculated daily calories, external function for Account module
    */
   Account.prototype.calculate_calories = function(email, callback)
   {
-    this.dependencies.connection.query(`SELECT * FROM Account WHERE Email = '${email}';`,
-      function(err, resp){
-        if (err)
-          throw err;
-        console.log(resp);
-        return callback(2000);
-      });
+    return calculateCalories(email, this.dependencies.connection, callback);
   };
+
+  /**
+   * TODO: This function needs to calculated recommended daily calories based on height, weight, age, goalweight, and FitBit data
+   * Calculates number of suggested daily calories
+   */
+  function calculateCalories(email, connection, callback)
+  {
+    connection.query(`SELECT * FROM Account WHERE Email = ?`,[email],
+      function(err, resp){
+      // DO something with account info
+
+      // Store calculated recommended daily calories in SQL table
+      let calculatedCalories = 2000;
+      connection.query(`
+        UPDATE Account
+          SET DailyCalories=${calculatedCalories}
+        WHERE Email='${email}';
+      `, function(err, resp){
+        // Return calories back as callback parameter
+        callback(calculatedCalories);
+      });
+    });
+  }
 
   /**
    * Connects FitBit to account
@@ -78,13 +100,16 @@
    */
   Account.prototype.authenticate = function(email, password, callback) {
     console.log(`Authenticating ${email}`);
-    this.account_exists(email, function(results){
+    let connection = this.dependencies.connection;
+    connection.query(`SELECT * FROM Account WHERE Email = ?`,[email], function(err, results){
       if (results.length > 0)
       {
         if (results[0].UserPassword === password)
         {
           console.log("Login success");
-          return callback(true);
+          calculateCalories(email, connection, function(err, resp){
+            return callback(true);
+          });
         }
         else
         {
@@ -96,6 +121,38 @@
       {
         console.log("User does not exist");
         return callback(false);
+      }
+    });
+  };
+
+  Account.prototype.get_account_info = function(email, callback) {
+    console.log('Getting account info for ' + email);
+    let connection = this.dependencies.connection;
+    connection.query(`SELECT * FROM Account WHERE Email = ?`,[email], function(err, resp){
+      if (err) throw err;
+      if (resp.length > 0)
+      {
+        let account_info = resp[0];
+        delete account_info.UserPassword;
+        if (account_info.FitBitConnected)
+        {
+          connection.query(`SELECT * FROM FitBit WHERE email = ?`, [email], function(err, fitbit_info){
+            if (err) throw err;
+            if (fitbit_info.length > 0)
+            {
+              Object.assign(account_info, fitbit_info[0]);
+            }
+            return callback(account_info);
+          })
+        }
+        else
+        {
+          return callback(account_info);
+        }
+      }
+      else
+      {
+        return callback({});
       }
     });
   };
@@ -140,6 +197,7 @@
           weight     = parseInt(user_info.weight),
           goalWeight = parseInt(user_info.goalWeight),
           budget     = Math.round(parseFloat(user_info.budget.replace("$", "")));
+
 
     // Inserting Post Request
     const sql = `INSERT into Account(Email, UserPassword, FirstName, Height, Weight, Age, Allergies, WeeklyBudget, GoalWeight, DailyCalories, FitBitConnected) 

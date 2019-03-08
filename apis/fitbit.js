@@ -17,7 +17,7 @@
     .send("clientId=22DK39")
     .send("grant_type=authorization_code")
     .send(`code=${access_key}`)
-    .send("redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fhome")
+    .send("redirect_uri=http%3A%2F%2Flocalhost%3A5000%2F")
     .end(function (result) {
 
       // Generating and parsing date for input

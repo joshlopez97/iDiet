@@ -107,10 +107,10 @@ $(document).ready(function(){
                       <div class="meal-caption">
                           <div class="meal-title">${data[i].title}</div>
                           <div class="meal-info">
-                              <div id="calories"><b>Calories:</b> ${data[i].calories}</div>
-                              <div id="protein"><b>Protein:</b> ${data[i].protein}g</div>
-                              <div id="calories"><b>Fat:</b> ${data[i].fats}g</div>
-                              <div id="cost">${data[i].price}</div>
+                              <div class="calories"><b>Calories:</b> ${data[i].calories}</div>
+                              <div class="protein"><b>Protein:</b> ${data[i].protein}g</div>
+                              <div class="calories"><b>Fat:</b> ${data[i].fats}g</div>
+                              <div class="cost green-bold">${data[i].price}</div>
                           </div>
                       </div>
                   </div>

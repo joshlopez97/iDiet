@@ -1,14 +1,15 @@
-.homepage-wrapper
+.header-wrapper
 {
   position: absolute;
   top: 61px;
   padding: 20px;
   width: calc(100% - 40px);
+  margin-bottom: 1em;
 }
 
 .homepage-header
 {
-  margin-bottom: 1em;
+  margin-bottom: 6px;
 }
 
 .meal-wrapper
@@ -57,7 +58,7 @@
 .meals
 {
   position: absolute;
-  top: 140px;
+  top: 200px;
   width: 100%;
 }
 .meal-row
@@ -68,12 +69,22 @@
   border-bottom: 1px #bbb solid;
 }
 
-#cost
+.cost
 {
   text-align: center;
+  font-size: 11pt;
+}
+
+.green-bold
+{
   color: #39bd62;
   font-weight: bold;
-  font-size: 11pt;
+}
+
+.dark-green-bold
+{
+  color: #2c6547;
+  font-weight: bold;
 }
 
 @media (min-width: 600px) {

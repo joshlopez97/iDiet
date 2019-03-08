@@ -32,7 +32,7 @@ connection.connect(function(err){
 });
 
 // iDiet node modules
-let mockuser = {"email" : "josephbarbosaa@gmail.com",
+let mockuser = {"email" : "joshlopez97@gmail.com",
                  "targetCalories" : 2000,
                  "dietType" : "",
                  "restrictions" : ""};
@@ -85,8 +85,28 @@ router.get('/', (req, res) => {
   // User is logged in
   if (req.session && req.session.user)
   {
-    console.log(req.session.user);
-    return res.render('pages/home', {"email": req.session.user.id});
+    let fitbit_key = req.query.code;
+    if (typeof fitbit_key !== 'undefined')
+    {
+      fitbit.login(req.session.user.id, fitbit_key, function(resp) {
+        if (resp.result === "success")
+          return res.redirect("/");
+        else
+        {
+          account.get_account_info(req.session.user.id, function(account_info){
+            console.log(account_info);
+            return res.render('pages/home', {'email': req.session.user.id, "acc": account_info});
+          });
+        }
+      });
+    }
+    else
+    {
+      account.get_account_info(req.session.user.id, function(account_info){
+        console.log(account_info);
+        return res.render('pages/home', {'email': req.session.user.id, "acc": account_info});
+      });
+    }
   }
   else
   {
@@ -103,16 +123,15 @@ router.get('/home', (req, res) => {
   if (typeof fitbit_key !== 'undefined')
   {
     fitbit.login(req.session.user.id, fitbit_key, function(result) {
-
-        // Setting the targetCalories that will be passed in to mealsapi.
-        mockuser.targetCalories = mockuser.targetCalories+result.totalCalories;
+      console.log(result);
     });
   }
+  account.get_account_info(req.session.user.id, function(account_info){
+    // connection.query(`DELETE FROM UserMeal WHERE email='${req.session.user.id}'`,
+    //   (e,r)=>{if (e) throw e; console.log(r);});
 
-
-  connection.query(`DELETE FROM UserMeal WHERE email='${req.session.user.id}'`,
-    (e,r)=>{if (e) throw e; console.log(r);});
-  return res.render('pages/home', {'email': req.session.user.id});
+    return res.render('pages/home', {'email': req.session.user.id, "acc": account_info});
+  });
 });
 
 // API Endpoint to get meals for specified user and day
@@ -137,7 +156,6 @@ router.get('/api/meals', (req, res) => {
           AND um.mindex = ${day}
       );
     `;
-    //console.log(sql);
     connection.query(sql, function(err, result){
       if (err) throw err;
       return res.json({"result": "success", "data": result});

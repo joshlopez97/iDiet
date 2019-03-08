@@ -11,8 +11,27 @@
 </head>
 <body>
 <% include ../partials/header %>
-<div class="homepage-wrapper">
+<div class="header-wrapper">
     <h1 class="homepage-header">My Diet Plan</h1>
+    <% if (locals.acc) { %>
+    <span class="account-info">
+        <div class="info-entry">
+            <span class="info-label">Weekly Budget: </span><span class="dark-green-bold">$<%-acc.WeeklyBudget%>.00</span>
+        </div>
+        <div class="info-entry">
+            <span class="info-label">Daily Recommended Calories: </span><span class="dark-green-bold"><%-acc.DailyCalories%></span>
+        </div>
+        <% if (!!acc.FitBitConnected) { %>
+        <div class="info-entry">
+            <span class="dark-green-bold">FitBit is Connected</span>
+        </div>
+        <% } else { %>
+        <div class="info-entry">
+            <a href="https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=22DK39&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2F&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=604800">Connect FitBit</a>
+        </div>
+        <% } %>
+    </span>
+    <% } %>
 </div>
 <!--This section is populated by client-side JS in /static/js/home.js-->
 <div class="meals">
