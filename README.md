@@ -35,7 +35,8 @@ CREATE TABLE Account (
   Allergies varchar(255),
   GoalWeight int NOT NULL,
   WeeklyBudget int NOT NULL,
-  DailyCalories int NOT NULL
+  DailyCalories int NOT NULL,
+  FitBitConnected bit NOT NULL
 );
 ```
 Storing Meal Information from Spoonacular Nutrition API
