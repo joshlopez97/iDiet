@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const unirest = require('unirest');
+const querystring = require('querystring');
 
 // Connecting MYSQL Database
 const mysql = require('mysql');
@@ -15,8 +16,13 @@ const connection = mysql.createConnection({
 connection.connect(function(err){
   if(!err) {
     console.log("Database is connected");
-    // connection.query("TRUNCATE TABLE MealEntry;",
-    //   (e,r)=>{if(e)throw(e);console.log(r);});
+//     connection.query(`
+//     ALTER TABLE
+//   Account
+// ADD
+//   COLUMN DailyCalories INT NOT NULL DEFAULT 0;
+//     `,
+//       (e,r)=>{if(e)throw(e);console.log(r);});
   } else {
     console.log("Error connecting database");
   }
@@ -28,17 +34,18 @@ let mockuser = {"email" : "josephbarbosaa@gmail.com",
                  "dietType" : "",
                  "restrictions" : ""};
 
+const accountModule = require('./user/account.js'),
+      account = accountModule.create({"connection":connection});
+
 const mealApi = require('./apis/mealsapi.js'),
       meals = mealApi.create({"connection": connection,
                               "unirest": unirest,
-                              "userinfo": mockuser});
+                              "userinfo": mockuser,
+                              "account": account});
 
 const fitbitApi = require('./apis/fitbit.js'),
       fitbit = fitbitApi.create({"connection":connection,
                                  "unirest": unirest});
-      
-const accountModule = require('./user/account.js'),
-      account = accountModule.create({"connection":connection});
 
 const app = express();
 
@@ -71,6 +78,7 @@ app.listen(port, () => {
 
 // Home Page
 router.get('/', (req, res) => {
+
   // User is logged in
   if (req.session && req.session.user)
   {
@@ -93,14 +101,12 @@ router.get('/home', (req, res) => {
 
         // Setting the targetCalories that will be passed in to mealsapi.
         mockuser.targetCalories = mockuser.targetCalories+result.totalCalories;
-
-        // Debugging
-        console.log(result);
-        console.log(mockuser);
     });
   }
 
   req.session.user = {id: mockuser.email, password: "password"};
+  connection.query(`DELETE FROM UserMeal WHERE email='${req.session.user.id}'`,
+    (e,r)=>{if (e) throw e; console.log(r);});
   return res.render('pages/home', {'email': req.session.user.id});
 });
 
@@ -145,10 +151,9 @@ router.get('/api/create/meals', (req, res) => {
   {
     account.account_exists(email, function(result)
     {
-      console.log(result);
       if (result)
       {
-        meals.generateMealPlan(email, function(mealplan)
+        meals.getMealPlan(email, function(mealplan)
         {
           return res.json({"result": "success", "data": mealplan});
         });
@@ -193,11 +198,37 @@ router.get('/signup', (req, res) => {
 
 router.post('/signup', (req, res) => {
   let user_info = {"email" : req.body.email,
-                 "password" : req.body.password,
-                 "firstname" : req.body.firstname,
-                 "height" : req.body.height,
-                 "weight" : req.body.weight,
-                 "age" : req.body.age};
+                   "password" : req.body.password,
+                   "firstname" : req.body.firstname,
+                   "height" : req.body.height,
+                   "weight" : req.body.weight,
+                   "age" : req.body.age};
+  const values = Object.assign({}, user_info);
+
+  // Verify Sign Up Info
+  const problems = account.verify_user_info(user_info);
+
+  // If no problems found with Sign Up Info, proceed to create user and sign in
+  if (problems.length === 0) {
+    const query = querystring.stringify(user_info);
+    return res.redirect('/personalize?' + query);
+  }
+  // Sign up info invalid, display error on signup page
+  else {
+    return res.render('pages/signup', {"problems":problems, "values":user_info});
+  }
+});
+
+// Personalize Page
+router.post('/personalize', (req, res) => {
+  let user_info = {"email" : req.query.email,
+                   "password" : req.query.password,
+                   "firstname" : req.query.firstname,
+                   "height" : req.query.height,
+                   "weight" : req.query.weight,
+                   "age" : req.query.age,
+                   "budget" : req.body.budget,
+                   "goalWeight" : req.body.goalWeight};
   const values = Object.assign({}, user_info);
   console.log(user_info);
 
@@ -208,22 +239,17 @@ router.post('/signup', (req, res) => {
   // If no problems found with Sign Up Info, proceed to create user and sign in
   if (problems.length === 0) {
     account.create_user(user_info);
-    req.session.user = {id: user_info.email, password: user_info.password, "firstname": user_info.firstname};
-    return res.redirect('/personalize');
+    req.session.user = {id: user_info.email, password: user_info.password};
+    return res.redirect('/');
   }
-  // Sign up info invalid, display error on signup page
-  else {
-    return res.render('pages/signup', data={"problems":problems, "values":user_info});
+  else
+  {
+    return res.render('pages/personalize', {"problems":problems, "values":user_info});
   }
 });
 
-// Personalize Page
 router.get('/personalize', (req, res) => {
-  return res.render('pages/personalize');
-});
-
-router.post('/personalize', (req, res) => {
-  return res.redirect('/');
+  return res.render("pages/personalize");
 });
 
 // Profile Page

@@ -26,9 +26,9 @@
             <div class="fields">
               <div class="form-field<%-(locals.problems && problems.includes('goalweight'))? ' err-field':''%>">
                 <span class="label">Goal Weight:</span>
-                <input name="goalweight" id="goalweight" class="text short" type="tel" style="display:inline-block;" maxlength="4"
-                       value="<%-locals.values?values.goalweight:''%>">  LBS
-                <% if (locals.problems && problems.includes('goalweight')) { %>
+                <input name="goalWeight" id="goalWeight" class="text short" type="tel" style="display:inline-block;" maxlength="4"
+                       value="<%-locals.values?values.goalWeight:''%>">  LBS
+                <% if (locals.problems && problems.includes('goalWeight')) { %>
                   <span class="errorMsg">Please enter a valid weight.</span>
                 <% } %>
               </div>

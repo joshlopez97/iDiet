@@ -1,12 +1,10 @@
 (function() {
 
-  function Account(options, email) {
-    this.options = options;
-    this.email = email;
+  function Account(dependencies) {
+    this.dependencies = dependencies;
   }
 
   function convert_to_inches(height_string) {
-    console.log(height_string);
     try {
       const heightRegex = /^([1-9]) ' ([0-9]|1[01])$/;
       const matches = heightRegex.exec(height_string),
@@ -19,45 +17,59 @@
     }
   }
 
-  Account.prototype.account_exists = function(email, callback)
+  /**
+   * Calculates number of suggested daily calories
+   */
+  Account.prototype.calculate_calories = function(email, callback)
   {
-    console.log(email);
-    this.options.connection.query(`SELECT * FROM Account WHERE Email = ?`,[email],
-      function(err, res){
+    this.dependencies.connection.query(`SELECT * FROM Account WHERE Email = '${email}';`,
+      function(err, resp){
         if (err)
           throw err;
-        console.log(res);
-        return callback(res.length > 0);
+        console.log(resp);
+        return callback(2000);
       });
   };
 
+  /**
+   * Checks whether or not an account exists
+   */
+  Account.prototype.account_exists = function(email, callback)
+  {
+    console.log(`Checking for existence of ${email}`);
+    this.dependencies.connection.query(`SELECT * FROM Account WHERE Email = ?`,[email],
+      function(err, resp){
+        if (err)
+          throw err;
+        let result = resp.length > 0;
+        console.log(`Result: ${result}`);
+        return callback(result);
+      });
+  };
+
+  /**
+   * Authenticates username and password
+   */
   Account.prototype.authenticate = function(email, password, callback) {
     console.log(`Authenticating ${email}`);
-    this.options.connection.query(`SELECT * FROM Account WHERE Email = ?`, [email], function(error, results, fields){
-      if (error)
+    this.account_exists(email, function(results){
+      if (results.length > 0)
       {
-        console.log("Error occurred:\n", error);
-      }
-      else
-      {
-        if (results.length > 0)
+        if (results[0].UserPassword === password)
         {
-          if (results[0].UserPassword === password)
-          {
-            console.log("Login success");
-            return callback(true);
-          }
-          else
-          {
-            console.log("Wrong credentials");
-            return callback(false);
-          }
+          console.log("Login success");
+          return callback(true);
         }
         else
         {
-          console.log("User does not exist");
+          console.log("Wrong credentials");
           return callback(false);
         }
+      }
+      else
+      {
+        console.log("User does not exist");
+        return callback(false);
       }
     });
   };
@@ -77,6 +89,8 @@
       "firstname":/^[a-z ,.'-]+$/i,
       "height":/^[1-9] ' ([0-9]|1[01])$/,
       "weight":/^[0-9]{2,}$/,
+      "goalWeight":/^[0-9]{2,}$/,
+      "budget":/^\$[0-9]+\.[0-9]{2}$/,
       "age":/^[0-9]{2,}$/
     };
     let problems = [];
@@ -95,22 +109,23 @@
   Account.prototype.create_user = function(user_info) {
 
     // Convert numerical values to ints
-    const height = user_info.height = convert_to_inches(user_info.height),
-          age    = parseInt(user_info.age),
-          weight = parseInt(user_info.weight);
+    const height     = user_info.height = convert_to_inches(user_info.height),
+          age        = parseInt(user_info.age),
+          weight     = parseInt(user_info.weight),
+          goalWeight = parseInt(user_info.goalWeight),
+          budget     = Math.round(parseFloat(user_info.budget.replace("$", "")));
 
     // Inserting Post Request
-    const sql = `INSERT into Account(Email, UserPassword, FirstName, Height, Weight, Age, Allergies) 
-                values ('${user_info.email}', '${user_info.password}', '${user_info.firstname}', ${height}, ${weight}, ${age}, NULL)`;
+    const sql = `INSERT into Account(Email, UserPassword, FirstName, Height, Weight, Age, Allergies, WeeklyBudget, GoalWeight, DailyCalories) 
+                values ('${user_info.email}', '${user_info.password}', '${user_info.firstname}', ${height}, ${weight}, ${age}, NULL, ${budget}, ${goalWeight}, 0)`;
     console.log(sql);
-    this.options.connection.query(sql, (err) => {
+    this.dependencies.connection.query(sql, (err) => {
       if(err) throw err;
-      console.log(sql);
     });
   };
 
-  exports.create = function(options, email) {
-    return new Account(options, email);
+  exports.create = function(options) {
+    return new Account(options);
   };
 
 }());

@@ -32,7 +32,10 @@ CREATE TABLE Account (
   Height int NOT NULL,
   Weight int NOT NULL,
   Age int NOT NULL,
-  Allergies varchar(255)
+  Allergies varchar(255),
+  GoalWeight int NOT NULL,
+  WeeklyBudget int NOT NULL,
+  DailyCalories int NOT NULL
 );
 ```
 Storing Meal Information from Spoonacular Nutrition API

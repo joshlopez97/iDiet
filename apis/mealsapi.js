@@ -15,6 +15,13 @@
 	}
 
   /**
+   * Creates MealsApi object
+   */
+  exports.create = function(dependencies) {
+    return new MealsApi(dependencies);
+  };
+
+  /**
    * Queries for all meals currently in Meals table for user with
    * provided email.
    */
@@ -135,23 +142,17 @@
    * Generate meal plan for user.
    * @param callback Action to perform after meals are generated
    */
-	MealsApi.prototype.generateMealPlan = function (email, callback)
+	MealsApi.prototype.getMealPlan = function (email, callback)
 	{
 	  // Define dependencies for inner functions
     const connection = this.dependencies.connection,
           unirest = this.dependencies.unirest;
 
-    // API endpoint for getting new mealplan
-    const endpoint = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/mealplans/" +
-      "generate?timeFrame=week" +
-      "&targetCalories=" + this.dependencies.userinfo.targetCalories +
-      "&diet=" + this.dependencies.userinfo.dietType +
-      "&exclude=" + encodeURI(this.dependencies.userinfo.restrictions);
-
     // Define callback functions for getting nutrition/price info
     let recipeCallback = function(recipes)
     {
       checkForExpiredMeals(recipes, 0, connection, new Set(), function(expired){
+        console.log(expired);
         connection.query(`SELECT * FROM UserMeal WHERE email='${email}'`,(e,r)=>{
           let numberOfMealsToReplace = 21 - r.length;
           replaceExpiredMeals([], numberOfMealsToReplace, email, connection, function(mealsToAdd){
@@ -163,34 +164,109 @@
       });
     };
 
-    // Check for existing meal plan
-    connection.query(`SELECT * FROM UserMeal m WHERE m.email='${email}';`, function(err,res){
-      if (err) throw err;
-      if (res.length > 0)
-      {
-        getRecipesFor(email, connection, recipeCallback);
-      }
-      else
-      {
-        unirest.get(endpoint)
-          .header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
-          .end(function (result) {
-            const meals = [];
-            for (let item of result.body.items)
-              meals.push(JSON.parse(item.value));
-            assignMealsToUser(meals, 0, email, connection, function(err){
-              if (err)
-                throw err;
-              let q = `SELECT * FROM UserMeal WHERE email=${email}`;
-              console.log(q);
-              connection.query(q,(e,res)=>{console.log(res)});
-              getRecipesFor(email, connection, recipeCallback);
+    this.dependencies.account.calculate_calories(email,
+      function(targetCalories){
+        // Check for existing meal plan
+        connection.query(`SELECT * FROM UserMeal m WHERE m.email='${email}';`, function(err,res){
+          if (err) throw err;
+          if (res.length > 0)
+          {
+            getRecipesFor(email, connection, recipeCallback);
+          }
+          else
+          {
+            connection.query(`SELECT WeeklyBudget FROM Account WHERE Email='${email}'`, function(err, resp){
+              if (err) throw err;
+              console.log(resp);
+              let mealplan = Array(21);
+              createMealPlan(email, targetCalories, resp[0].WeeklyBudget / 7, connection, unirest, mealplan, callback);
             });
-          });
-      }
-    });
+
+          }
+        });
+      });
 	};
 
+  function chooser(choices, goalBudget, goalCalories, count, mealsNotAllowed=[]){
+    return Array.from(choices)
+      .filter(function(choice){
+        for (let meal of mealsNotAllowed)
+          if (meal.mid === choice.mid)
+            return false;
+        return true;
+      })
+      .sort(function(c1, c2){
+        const c1calorieDiff = Math.abs(c1.calories - goalCalories),
+              c2calorieDiff = Math.abs(c2.calories - goalCalories),
+              c1Weight      = (c1calorieDiff / goalCalories) + (parseFloat(c1.price.replace("$","")) / goalBudget),
+              c2Weight      = (c2calorieDiff / goalCalories) + (parseFloat(c2.price.replace("$","")) / goalBudget);
+        return c1Weight - c2Weight;
+      })
+      .slice(0, count);
+  }
+
+  /**
+   * New Create Meal Plan function uses cached meals over API calls to gather meals.
+   */
+	function createMealPlan(email, dailyCalories, dailyBudget, connection, unirest, mealplan, callback)
+  {
+    const mealRatios   = [0.2, 0.4, 0.4],
+          budgetRatios = [0.3, 0.35, 0.35],
+          chooseFunct  = [];
+    console.log(`
+    --- Create Meal Parameters ---
+    Daily Calories: ${dailyCalories}
+    Daily Budget:   $${dailyBudget}
+    Breakfast:      $${dailyBudget * budgetRatios[0]}
+                    ${dailyCalories * mealRatios[0]}
+    Lunch:          $${dailyBudget * budgetRatios[1]}
+                    ${dailyCalories * mealRatios[1]}
+    Dinner:         $${dailyBudget * budgetRatios[2]}
+                    ${dailyCalories * mealRatios[2]}
+    `);
+    for (let i = 0; i < 3; i++)
+    {
+      chooseFunct.push(function(choices){
+        return chooser(choices, dailyBudget * budgetRatios[i], dailyCalories * mealRatios[i], 7);
+      });
+    }
+
+    selectMeals(0, chooseFunct[0], mealplan, connection, function(mealplan){
+      selectMeals(1, chooseFunct[1], mealplan, connection, function(mealplan){
+        selectMeals(2, chooseFunct[2], mealplan, connection, function(mealplan){
+          console.log("MEALPLAN: ");
+          console.log(mealplan);
+          assignMealsToUser(mealplan, 0, email, connection, function(){
+            return callback(mealplan);
+          });
+        })
+      });
+    });
+  }
+
+  function selectMeals(typeIndex, choosingFunction, mealplan, connection, callback)
+  {
+    const mealTypes = ["breakfast", "lunch", "dinner"];
+    connection.query(`
+      SELECT * FROM MealEntry
+        WHERE type='${mealTypes[typeIndex]}';
+      `,
+      function (err, resp){
+        if (err)
+          throw err;
+        let chosenMeals = choosingFunction(resp);
+        for (let i = 0, j = typeIndex; j < 21; i++, j+=3)
+          mealplan[j] = chosenMeals[i];
+        return callback(mealplan);
+      });
+  }
+
+
+
+  /**
+   * Checks for meals that were created in past dates. These meals will need to be replaced
+   * this meals for future dates.
+   */
 	function checkForExpiredMeals(meals, current, connection, expired, callback)
   {
     if (current >= meals.length || meals.length === 0)
@@ -220,9 +296,13 @@
     }
   }
 
-  function replaceExpiredMeals(meals, expired, email, connection, callback)
+  /**
+   * Generates new set of meals and pushes into array named meals which is passed
+   * into callback. numberOfMealsToAdd defines how many meals to replace
+   */
+  function replaceExpiredMeals(meals, numberOfMealsToAdd, email, connection, callback)
   {
-    if (expired === 0)
+    if (numberOfMealsToAdd === 0)
       callback(meals);
     else
     {
@@ -232,8 +312,8 @@
           meals.push(choose(res2));
           connection.query(`SELECT * FROM MealEntry WHERE type='dinner'`, function(err, res3) {
             meals.push(choose(res3));
-            expired--;
-            replaceExpiredMeals(meals, expired, email, connection, callback);
+            numberOfMealsToAdd--;
+            replaceExpiredMeals(meals, numberOfMealsToAdd, email, connection, callback);
           });
         })
       });
@@ -245,10 +325,41 @@
     return array[Math.floor(Math.random()*array.length)];
   }
 
-  MealsApi.prototype.replaceMeal = function(dayIndex, type, callback)
+  /**
+   * FIXME: The following 4 functions must be deleted or refactored, as they are unused
+   *
+   * Meal plans are now created using SQL queries only without any API calls, so this function can be
+   * converted to a fallback if the generated meal plan fails to meet some budget/calorie threshold
+   * and new data is needed.
+   */
+  function createMealPlanFromScratch(email, targetCalories, connection, unirest, recipeCallback)
   {
-  };
+    const endpoint   = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/mealplans/" +
+      "generate?timeFrame=week" +
+      "&targetCalories=" + targetCalories;
+    unirest.get(endpoint)
+      .header("X-RapidAPI-Key", "62649045e6msh29f8aefde649a9bp1591edjsnf389cd9bbedf")
+      .end(function (result) {
+        const meals = [];
+        for (let item of result.body.items)
+          meals.push(JSON.parse(item.value));
+        assignMealsToUser(meals, 0, email, connection, function(err){
+          if (err)
+            throw err;
+          let q = `SELECT * FROM UserMeal WHERE email=${email}`;
+          console.log(q);
+          connection.query(q,(e,res)=>{console.log(res)});
+          getRecipesFor(email, connection, recipeCallback);
+        });
+      });
+  }
 
+
+  /**
+   * This function recursively calls the API to get detailed information on meals
+   * stored in the list named meals. The meal information is stored in mealplan and
+   * passed to callback after all meals have been processed.
+   */
 	function getMealsInformation(meals, current, connection, unirest, mealplan, callback)
   {
     if (meals === null || typeof meals === "undefined" || meals.length === 0 || current >= meals.length)
@@ -294,7 +405,7 @@
   {
     let sql = `INSERT into MealEntry(mid, title, type, price, imagelink, calories, protein, carbs, fats, link, slink, vegetarian, vegan, glutenfree, dairyfree, ketogenic) 
     values(${food_data.mid},${food_data.title},${food_data.type},${food_data.price},${food_data.imagelink},${food_data.calories},${food_data.protein},${food_data.carbs},${food_data.fats},${food_data.link},${food_data.slink},${food_data.vegetarian},${food_data.vegan},${food_data.glutenfree},${food_data.dairyfree},${food_data.ketogenic});`;
-    console.log(sql)
+    console.log(sql);
     connection.query(sql,
       function(err){
         if (err) throw err;
@@ -312,14 +423,5 @@
       callback(result);
     });
   }
-
-
-
-  /**
-   * Creates MealsApi object
-   */
-	exports.create = function(dependencies) {
-	  return new MealsApi(dependencies);
-	};
 
 }());
