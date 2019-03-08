@@ -32,6 +32,32 @@
   };
 
   /**
+   * Connects FitBit to account
+   */
+  Account.prototype.connect_fitbit = function(email, access_key, fitbit_data, callback)
+  {
+    const connection = this.dependencies.connection;
+    connection.query(`
+      UPDATE Account
+        SET FitBitConnected=1
+      WHERE Email='${email}'
+    `, function(err, resp){
+      if (resp.changedRows === 0)
+      {
+        console.log("FitBit already connected");
+        callback(err, resp);
+      }
+      else
+      {
+        connection.query(`
+        INSERT into FitBit(email, accessKey, caloriesBurned, steps, distance)
+          values('${email}', '${access_key}', ${fitbit_data.totalCalories}, ${fitbit_data.totalSteps}, ${fitbit_data.totalDistance});
+        `, callback);
+      }
+    })
+  };
+
+  /**
    * Checks whether or not an account exists
    */
   Account.prototype.account_exists = function(email, callback)

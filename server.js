@@ -16,13 +16,16 @@ const connection = mysql.createConnection({
 connection.connect(function(err){
   if(!err) {
     console.log("Database is connected");
-    connection.query(`
-    ALTER TABLE
-  Account
-ADD
-  COLUMN FitBitConnected BIT NOT NULL DEFAULT 0;
-    `,
-      (e,r)=>{if(e)throw(e);console.log(r);});
+//     connection.query(`
+// CREATE TABLE FitBit (
+//   email varchar(255) UNIQUE NOT NULL,
+//   accessKey varchar(255) NOT NULL,
+//   caloriesBurned int,
+//   steps int,
+//   distance int
+// );
+//     `,
+//       (e,r)=>{if(e)throw(e);console.log(r);});
   } else {
     console.log("Error connecting database");
   }
@@ -44,7 +47,8 @@ const mealApi = require('./apis/mealsapi.js'),
 
 const fitbitApi = require('./apis/fitbit.js'),
       fitbit = fitbitApi.create({"connection":connection,
-                                 "unirest": unirest});
+                                 "unirest": unirest,
+                                 "account": account});
 
 const app = express();
 
@@ -93,17 +97,19 @@ router.get('/', (req, res) => {
 
 // Temporary route for bypassing login
 router.get('/home', (req, res) => {
+  req.session.user = {id: mockuser.email, password: "password"};
+
   let fitbit_key = req.query.code;
   if (typeof fitbit_key !== 'undefined')
   {
-    fitbit.login(fitbit_key, function(result) {
+    fitbit.login(req.session.user.id, fitbit_key, function(result) {
 
         // Setting the targetCalories that will be passed in to mealsapi.
         mockuser.targetCalories = mockuser.targetCalories+result.totalCalories;
     });
   }
 
-  req.session.user = {id: mockuser.email, password: "password"};
+
   connection.query(`DELETE FROM UserMeal WHERE email='${req.session.user.id}'`,
     (e,r)=>{if (e) throw e; console.log(r);});
   return res.render('pages/home', {'email': req.session.user.id});
