@@ -16,13 +16,13 @@ const connection = mysql.createConnection({
 connection.connect(function(err){
   if(!err) {
     console.log("Database is connected");
-//     connection.query(`
-//     ALTER TABLE
-//   Account
-// ADD
-//   COLUMN DailyCalories INT NOT NULL DEFAULT 0;
-//     `,
-//       (e,r)=>{if(e)throw(e);console.log(r);});
+    connection.query(`
+    ALTER TABLE
+  Account
+ADD
+  COLUMN FitBitConnected BIT NOT NULL DEFAULT 0;
+    `,
+      (e,r)=>{if(e)throw(e);console.log(r);});
   } else {
     console.log("Error connecting database");
   }
@@ -40,7 +40,6 @@ const accountModule = require('./user/account.js'),
 const mealApi = require('./apis/mealsapi.js'),
       meals = mealApi.create({"connection": connection,
                               "unirest": unirest,
-                              "userinfo": mockuser,
                               "account": account});
 
 const fitbitApi = require('./apis/fitbit.js'),

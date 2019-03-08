@@ -116,16 +116,16 @@
           budget     = Math.round(parseFloat(user_info.budget.replace("$", "")));
 
     // Inserting Post Request
-    const sql = `INSERT into Account(Email, UserPassword, FirstName, Height, Weight, Age, Allergies, WeeklyBudget, GoalWeight, DailyCalories) 
-                values ('${user_info.email}', '${user_info.password}', '${user_info.firstname}', ${height}, ${weight}, ${age}, NULL, ${budget}, ${goalWeight}, 0)`;
+    const sql = `INSERT into Account(Email, UserPassword, FirstName, Height, Weight, Age, Allergies, WeeklyBudget, GoalWeight, DailyCalories, FitBitConnected) 
+                values ('${user_info.email}', '${user_info.password}', '${user_info.firstname}', ${height}, ${weight}, ${age}, NULL, ${budget}, ${goalWeight}, 0, 0)`;
     console.log(sql);
     this.dependencies.connection.query(sql, (err) => {
       if(err) throw err;
     });
   };
 
-  exports.create = function(options) {
-    return new Account(options);
+  exports.create = function(dependencies) {
+    return new Account(dependencies);
   };
 
 }());
