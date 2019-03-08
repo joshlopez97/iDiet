@@ -12,6 +12,8 @@
    */
 	function MealsApi(dependencies) {
 	  this.dependencies = dependencies;
+    this.mealRatios   = [0.2, 0.4, 0.4];
+    this.budgetRatios = [0.3, 0.35, 0.35];
 	}
 
   /**
@@ -338,16 +340,18 @@
    */
   function replaceExpiredMeals(meals, mealsBuffer, targetCalories, weeklyBudget, numberOfMealsToAdd, email, connection, callback)
   {
+    let budgetRatios = this.budgetRatios,
+        mealRatios   = this.mealRatios;
     if (numberOfMealsToAdd === 0)
       callback(mealsBuffer);
     else
     {
       connection.query(`SELECT * FROM MealEntry WHERE type='breakfast'`,function(err, res1){
-        mealsBuffer.push(chooser(res1, (weeklyBudget / 21), targetCalories / 3, 1, meals));
+        mealsBuffer.push(chooser(res1, (weeklyBudget / 7) * budgetRatios[0], targetCalories * mealRatios[0], 1, meals));
         connection.query(`SELECT * FROM MealEntry WHERE type='lunch'`, function(err, res2){
-          mealsBuffer.push(chooser(res2, (weeklyBudget / 21), targetCalories / 3, 1, meals));
+          mealsBuffer.push(chooser(res2, (weeklyBudget / 7) * budgetRatios[1], targetCalories * mealRatios[1], 1, meals));
           connection.query(`SELECT * FROM MealEntry WHERE type='dinner'`, function(err, res3) {
-            mealsBuffer.push(chooser(res3, (weeklyBudget / 21), targetCalories / 3, 1, meals));
+            mealsBuffer.push(chooser(res3, (weeklyBudget / 7) * budgetRatios[2], targetCalories * mealRatios[2], 1, meals));
             numberOfMealsToAdd--;
             replaceExpiredMeals(meals, mealsBuffer, targetCalories, weeklyBudget, numberOfMealsToAdd, email, connection, callback);
           });

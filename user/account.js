@@ -38,17 +38,18 @@
   {
     connection.query(`SELECT * FROM Account WHERE Email = ?`,[email],
       function(err, resp){
-      // DO something with account info
+        let account_info = resp[0];
+        // DO something with account info
 
-      // Store calculated recommended daily calories in SQL table
-      let calculatedCalories = 2000;
-      connection.query(`
-        UPDATE Account
-          SET DailyCalories=${calculatedCalories}
-        WHERE Email='${email}';
-      `, function(err, resp){
-        // Return calories and budget back as callback parameter
-        callback(calculatedCalories, resp[0].WeeklyBudget);
+        // Store calculated recommended daily calories in SQL table
+        let calculatedCalories = 2000;
+        connection.query(`
+          UPDATE Account
+            SET DailyCalories=${calculatedCalories}
+          WHERE Email='${email}';
+        `, function(err, resp){
+          // Return calories and budget back as callback parameter
+          callback(calculatedCalories, account_info.WeeklyBudget);
       });
     });
   }
@@ -102,6 +103,7 @@
     console.log(`Authenticating ${email}`);
     let connection = this.dependencies.connection;
     connection.query(`SELECT * FROM Account WHERE Email = ?`,[email], function(err, results){
+      console.log(results);
       if (results.length > 0)
       {
         if (results[0].UserPassword === password)
