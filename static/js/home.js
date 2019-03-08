@@ -39,16 +39,30 @@ $(document).ready(function(){
         });
       });
       $(".dislike-icon-holder").click(function(){
-        let meal_info = $(this).attr("id").match(/([0-9]+)/g);
+        let meal_info = $(this).attr("id").match(/([0-9]+)/g),
+            meal_holder = $(this).parent();
+        meal_holder.css("display","none");
+
+        addMealLoader(meal_holder.parent(), meal_info[0], meal_info[1]);
+
         $.get(`/api/dislike?email=${email}&mid=${meal_info[0]}&mindex=${meal_info[1]}`, function(res){
           console.log(res);
-          replaceMeal($(`#mh-${meal_info[0]}-${meal_info[1]}`), res.data, meal_info[1]);
+          replaceMeal(meal_holder, res.data, meal_info[0], meal_info[1]);
         });
       });
     });
   }
 
-  function replaceMeal(element, newMealData, mindex)
+  function addMealLoader(elem, mid, mindex)
+  {
+    elem.append(`
+      <div id="loader-${mid}-${mindex}" class="mini-loader">
+        <div class="lds-circle"><div></div></div><br>
+      </div>
+    `);
+  }
+
+  function replaceMeal(element, newMealData, mid, mindex)
   {
     console.log(newMealData);
     console.log(element.find(".thumbnail").length);
@@ -61,6 +75,9 @@ $(document).ready(function(){
     element.find(".like-icon-holder").attr("id", `like-${newMealData.mid}-${mindex}`);
     element.find(".dislike-icon-holder").attr("id", `dislike-${newMealData.mid}-${mindex}`);
     element.attr("id", `mh-${newMealData.mid}-${mindex}`);
+    $(`#loader-${mid}-${mindex}`).remove();
+    element.css("display", "inline-block");
+
   }
 
   function getMeals(dindex, formattedDates, current, email, callback)
