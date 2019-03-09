@@ -35,24 +35,46 @@
    * Calculates number of suggested daily calories
    */
   function calculateCalories(email, connection, callback)
-  {
-    connection.query(`SELECT * FROM Account WHERE Email = ?`,[email],
-      function(err, resp){
-        let account_info = resp[0];
-        // DO something with account info
+   {
+     connection.query(`SELECT * FROM Account WHERE Email = ?`,[email],
+       function(err, resp){
+         let account_info = resp[0];
+         
+    // Harris-Benedict Equation BMR Calculation
+    let height = account_info.Height;
+    let weight = account_info.Weight;
+    let age = account_info.Age;
+    
+    // let gender = account_info.Gender; // Need to add, but assume everyone a male right now.
+    // let activityFactor = account_info.activityFactor; // Need to add, but assume everyone is moderately active right now.
+    // let activityMultiplier = 0;
+    
+    /* Multipliers For activityFactor
+    if (activityFactor == 1)
+      activityMultiplier = 1.2;
+    else if (activityFactor == 2)
+      activityMultiplier = 1.3;
+    else if (activityFactor == 3)
+      activityMultiplier = 1.4; */
+    
+    /* Male: 66 + ( 6.2 ◊ weight in pounds ) + ( 12.7 ◊ height in inches ) ñ ( 6.76 ◊ age in years )
+       Female: 655.1 + ( 4.35 ◊ weight in pounds ) + ( 4.7 ◊ height in inches ) - ( 4.7 ◊ age in years ) */
+    
+    // Store calculated recommended daily calories in SQL table
+    let BMR = 66 + (6.2 * weight) + (12.7 * height) - (6.76 * age);
+    
+    let calculatedCalories = BMR * 1.3; // BMR * activityMultiplier once implemented
 
-        // Store calculated recommended daily calories in SQL table
-        let calculatedCalories = 2000;
-        connection.query(`
-          UPDATE Account
-            SET DailyCalories=${calculatedCalories}
-          WHERE Email='${email}';
-        `, function(err, resp){
-          // Return calories and budget back as callback parameter
-          callback(calculatedCalories, account_info.WeeklyBudget);
-      });
-    });
-  }
+         connection.query(`
+           UPDATE Account
+             SET DailyCalories=${calculatedCalories}
+           WHERE Email='${email}';
+         `, function(err, resp){
+           // Return calories and budget back as callback parameter
+           callback(calculatedCalories, account_info.WeeklyBudget);
+       });
+     });
+   }
 
   /**
    * Connects FitBit to account
