@@ -50,6 +50,7 @@
     // let activityMultiplier = 0;
     
     /* Multipliers For activityFactor
+    - Will be added when functionality for gender and activity factor implemented.
 
     //Sedentary activity
     if (activityFactor == 1)
