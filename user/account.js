@@ -50,17 +50,36 @@
     // let activityMultiplier = 0;
     
     /* Multipliers For activityFactor
+    - Will be added when functionality for gender and activity factor implemented.
+
+    //Sedentary activity
     if (activityFactor == 1)
       activityMultiplier = 1.2;
+    //Lightly active
     else if (activityFactor == 2)
-      activityMultiplier = 1.3;
+      activityMultiplier = 1.375;
+    //Moderately active
     else if (activityFactor == 3)
-      activityMultiplier = 1.4; */
-    
-    /* Male: 66 + ( 6.2 ◊ weight in pounds ) + ( 12.7 ◊ height in inches ) ñ ( 6.76 ◊ age in years )
-       Female: 655.1 + ( 4.35 ◊ weight in pounds ) + ( 4.7 ◊ height in inches ) - ( 4.7 ◊ age in years ) */
-    
+      activityMultiplier = 1.55;
+    //Very Active
+    else if (activityFactor == 4)
+      activityMultiplier = 1.725*/
+
+    /* Mifflin-ST JEOR equation for BMR
+      Male: 10 * weight(kg) + 6.25 * height(cm) - 5 * age (y) + s (+5 for males)
+      Female: 10 * weight(kg) + 6.25 * height(cm) - 5 * age (y) + s (-161 for females) */
+
     // Store calculated recommended daily calories in SQL table
+    /*
+    if (account_info.Gender === Male)
+    {
+      let BMR = (10 * weight) + (6.25 * height) - (5 * age) + 5
+    }
+    else
+    {
+      let BMR = (10 * weight) + (6.25 * height) - (5 * age) - 161
+    }
+    */
     let BMR = 66 + (6.2 * weight) + (12.7 * height) - (6.76 * age);
     
     let calculatedCalories = BMR * 1.3; // BMR * activityMultiplier once implemented
