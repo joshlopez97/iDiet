@@ -113,12 +113,38 @@ Liked and Disliked Meals:
 - mid: recipe ID of meal that was liked/disliked
 ```
 CREATE TABLE Likes (
-  email varchar(255) NOT NULL,
+  email varchar(255) UNIQUE NOT NULL,
   mid int NOT NULL
 );
 CREATE TABLE Dislikes (
-  email varchar(255) NOT NULL,
+  email varchar(255) UNIQUE NOT NULL,
   mid int NOT NULL
 );
 ```
+Food Preferences:
+- email: email of iDiet account
+- totalLikes: total number of meals liked
+- totalDislikes: total number of meals disliked
+- vegetarian...ketogenic: value between 0.5 - 1.5 indicating how much a user likes foods from this category
+(Likes increase this value and Dislikes decrease this value)   
+- averageLikePrice: the average price of all meals that the user has liked
+- averageDisikePrice: the average price of all meals that the user has disliked
+- averageLikeCalories: the average calories of all meals that the user has liked
+- averageDislikeCalories: the average calories of all meals that the user has disliked
 
+```
+CREATE TABLE FoodPreferences (
+  email varchar(255) UNIQUE NOT NULL,
+  totalLikes int NOT NULL DEFAULT 0,
+  totalDislikes int NOT NULL DEFAULT 0,
+  vegetarian float NOT NULL,
+  vegan float NOT NULL,
+  glutenfree float NOT NULL,
+  dairyfree float NOT NULL,
+  ketogenic float NOT NULL,
+  averageLikePrice float,
+  averageDislikePrice float,
+  averageLikeCalories float,
+  averageDislikeCalories float
+);
+```

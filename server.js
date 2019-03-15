@@ -11,16 +11,25 @@ const connection = mysql.createConnection({
   host: 'idiet.cqywkz4otd3h.us-east-2.rds.amazonaws.com',
   user: 'idiet',
   password: '1a2b3c4d5e',
-  database: 'idiet'
+  database: 'idiet',
+  // for casting type BIT to boolean values
+  typeCast: function castField(field, useDefaultTypeCasting) {
+
+    if ( ( field.type === "BIT" ) && ( field.length === 1 ) ) {
+
+      let bytes = field.buffer();
+      return( bytes[0] === 1 );
+
+    }
+
+    return( useDefaultTypeCasting() );
+  }
 });
 connection.connect(function(err){
   if(!err) {
     console.log("Database is connected");
 //     connection.query(`
-// CREATE TABLE Dislikes (
-//   email varchar(255) NOT NULL,
-//   mid int NOT NULL
-// );
+// TRUNCATE TABLE Likes;
 //     `,
 //       (e,r)=>{if(e)throw(e);console.log(r);});
   } else {
@@ -43,7 +52,8 @@ const preferencesModule = require('./user/preferences.js'),
 const mealApi = require('./apis/mealsapi.js'),
       meals = mealApi.create({"connection": connection,
                               "unirest": unirest,
-                              "account": account});
+                              "account": account,
+                              "preferences": preferences});
 
 const fitbitApi = require('./apis/fitbit.js'),
       fitbit = fitbitApi.create({"connection":connection,

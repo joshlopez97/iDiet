@@ -6,7 +6,7 @@
   const sqlstr = require('sqlstring');
 
   /**
-   * This constructor creates a new MealsApi object with the provided dependencies.
+   * This constructor creates a new MealsApi object with injected dependencies.
    * @param dependencies
    * @constructor
    */
@@ -140,7 +140,8 @@
 
   MealsApi.prototype.replaceMeal = function(email, mid, mindex, callback)
   {
-    let connection = this.dependencies.connection;
+    let connection = this.dependencies.connection,
+        preferences = this.dependencies.preferences;
     connection.query(`SELECT * FROM MealEntry WHERE mid=?`, [mid], function(err,resp){
       console.log(resp);
       let replacedMealData = resp[0];
@@ -157,12 +158,15 @@
               email = ?
           );
       `, [replacedMealData.type, email], function(err, resp){
-        let result = chooser(resp, replacedMealData.price, replacedMealData.budget, 1, [])[0];
-        connection.query(`UPDATE UserMeal SET mid=? WHERE email=? AND mindex=? AND mid=?`, [result.mid, email, mindex, mid],
-          function(err, resp){
-            if (err) throw err;
-            return callback(result);
-          });
+        // Get past user food preferences
+        preferences.getPreferences(email, function(preferenceData) {
+          let result = choose(resp, replacedMealData.price, replacedMealData.budget, 1, [], preferenceData)[0];
+          connection.query(`UPDATE UserMeal SET mid=? WHERE email=? AND mindex=? AND mid=?`, [result.mid, email, mindex, mid],
+            function (err, resp) {
+              if (err) throw err;
+              return callback(result);
+            });
+        });
       });
     });
   };
@@ -177,7 +181,8 @@
 	  // Define dependencies for inner functions
     const connection = this.dependencies.connection,
           unirest = this.dependencies.unirest,
-          account = this.dependencies.account;
+          account = this.dependencies.account,
+          preferences = this.dependencies.preferences;
 
     // Define callback functions for getting nutrition/price info
     let recipeCallback = function(meals)
@@ -187,7 +192,7 @@
         account.getTargetCaloriesAndBudget(email,
           function(targetCalories, weeklyBudget) {
             let numberOfMealsToReplace = 21 - expired.length;
-            replaceExpiredMeals(meals, [], targetCalories, weeklyBudget, numberOfMealsToReplace, email, connection, function (mealsToAdd) {
+            replaceExpiredMeals(meals, [], targetCalories, weeklyBudget, numberOfMealsToReplace, email, connection, preferences, function (mealsToAdd) {
               assignMealsToUser(mealsToAdd, 0, email, connection, function () {
                 getMealsInformation(meals, 0, connection, unirest, [], callback);
               }, 7 - mealsToAdd.length);
@@ -211,7 +216,7 @@
               if (err) throw err;
               console.log(resp);
               let mealplan = Array(21);
-              createMealPlan(email, targetCalories, resp[0].WeeklyBudget / 7, connection, unirest, mealplan, callback);
+              createMealPlan(email, targetCalories, resp[0].WeeklyBudget / 7, connection, unirest, preferences, mealplan, callback);
             });
 
           }
@@ -224,8 +229,9 @@
    * 1.) How much cheaper the meal is than goalBudget
    * 2.) How close in calories the meal is to goalCalories
    * 3.) Meal cannot be in mealsNotAllowed
+   * 4.) The user's preferences towards categories that the food falls under
    */
-  function chooser(mealOptions, goalBudget, goalCalories, count, mealsNotAllowed=[]){
+  function choose(mealOptions, goalBudget, goalCalories, count, mealsNotAllowed, preferences){
     return Array.from(mealOptions)
       .filter(function(choice){
         for (let meal of mealsNotAllowed)
@@ -234,10 +240,21 @@
         return true;
       })
       .sort(function(c1, c2){
-        const c1calorieDiff = Math.abs(c1.calories - goalCalories),
-              c2calorieDiff = Math.abs(c2.calories - goalCalories),
-              c1Weight      = (c1calorieDiff / goalCalories) + (parseFloat(c1.price.replace("$","")) / goalBudget),
-              c2Weight      = (c2calorieDiff / goalCalories) + (parseFloat(c2.price.replace("$","")) / goalBudget);
+        // Create weights to measure how close food is to target calories/price
+        let c1calorieDiff = Math.abs(c1.calories - goalCalories),
+            c2calorieDiff = Math.abs(c2.calories - goalCalories),
+            c1Weight      = (c1calorieDiff / goalCalories) + (parseFloat(c1.price.replace("$","")) / goalBudget),
+            c2Weight      = (c2calorieDiff / goalCalories) + (parseFloat(c2.price.replace("$","")) / goalBudget);
+
+        // Adjust weights based on user preferences
+        for (let category of ["vegetarian", "vegan", "ketogenic", "glutenfree", "dairyfree"])
+        {
+          if (!!c1[category])
+            c1Weight *= preferences[category];
+          if (!!c2[category])
+            c2Weight *= preferences[category];
+        }
+        // Return difference in weight
         return c1Weight - c2Weight;
       })
       .slice(0, count);
@@ -246,7 +263,7 @@
   /**
    * New Create Meal Plan function uses cached meals over API calls to gather meals.
    */
-	function createMealPlan(email, dailyCalories, dailyBudget, connection, unirest, mealplan, callback)
+	function createMealPlan(email, dailyCalories, dailyBudget, connection, unirest, preferences, mealplan, callback)
   {
     const mealRatios   = [0.2, 0.4, 0.4],
           budgetRatios = [0.3, 0.35, 0.35],
@@ -262,24 +279,37 @@
     Dinner:         $${dailyBudget * budgetRatios[2]}
                     ${dailyCalories * mealRatios[2]}
     `);
-    for (let i = 0; i < 3; i++)
-    {
-      chooseFunct.push(function(choices){
-        return chooser(choices, dailyBudget * budgetRatios[i], dailyCalories * mealRatios[i], 7);
-      });
-    }
 
-    selectMeals(0, chooseFunct[0], mealplan, connection, function(mealplan){
-      selectMeals(1, chooseFunct[1], mealplan, connection, function(mealplan){
-        selectMeals(2, chooseFunct[2], mealplan, connection, function(mealplan){
-          console.log("MEALPLAN: ");
-          console.log(mealplan);
-          assignMealsToUser(mealplan, 0, email, connection, function(){
-            return callback(mealplan);
+    // Get past user food preferences
+    preferences.getPreferences(email, function(preferenceData){
+      preferences.getLikeDislikeData(email, function(likes, dislikes){
+
+        // Create 3 choosing functions for breakfast/lunch/dinner
+        for (let i = 0; i < 3; i++)
+        {
+          chooseFunct.push(function(choices){
+            return choose(choices, dailyBudget * budgetRatios[i], dailyCalories * mealRatios[i], 7, dislikes, preferences);
           });
-        })
+        }
+
+        // Breakfasts
+        selectMeals(0, chooseFunct[0], mealplan, connection, function(mealplan){
+          // Lunches
+          selectMeals(1, chooseFunct[1], mealplan, connection, function(mealplan){
+            // Dinners
+            selectMeals(2, chooseFunct[2], mealplan, connection, function(mealplan){
+              console.log("MEALPLAN: ");
+              console.log(mealplan);
+              assignMealsToUser(mealplan, 0, email, connection, function(){
+                return callback(mealplan);
+              });
+            })
+          });
+        });
+
       });
     });
+
   }
 
   function selectMeals(typeIndex, choosingFunction, mealplan, connection, callback)
@@ -338,7 +368,7 @@
    * Generates new set of meals and pushes into array named mealsBuffer which is passed
    * into callback. numberOfMealsToAdd defines how many meals to replace
    */
-  function replaceExpiredMeals(meals, mealsBuffer, targetCalories, weeklyBudget, numberOfMealsToAdd, email, connection, callback)
+  function replaceExpiredMeals(meals, mealsBuffer, targetCalories, weeklyBudget, numberOfMealsToAdd, email, connection, preferences, callback)
   {
     let budgetRatios = this.budgetRatios,
         mealRatios   = this.mealRatios;
@@ -346,23 +376,24 @@
       callback(mealsBuffer);
     else
     {
-      connection.query(`SELECT * FROM MealEntry WHERE type='breakfast'`,function(err, res1){
-        mealsBuffer.push(chooser(res1, (weeklyBudget / 7) * budgetRatios[0], targetCalories * mealRatios[0], 1, meals));
-        connection.query(`SELECT * FROM MealEntry WHERE type='lunch'`, function(err, res2){
-          mealsBuffer.push(chooser(res2, (weeklyBudget / 7) * budgetRatios[1], targetCalories * mealRatios[1], 1, meals));
-          connection.query(`SELECT * FROM MealEntry WHERE type='dinner'`, function(err, res3) {
-            mealsBuffer.push(chooser(res3, (weeklyBudget / 7) * budgetRatios[2], targetCalories * mealRatios[2], 1, meals));
-            numberOfMealsToAdd--;
-            replaceExpiredMeals(meals, mealsBuffer, targetCalories, weeklyBudget, numberOfMealsToAdd, email, connection, callback);
+      preferences.getPreferences(email, function(preferenceData) {
+        preferences.getLikeDislikeData(email, function (likes, dislikes) {
+
+          connection.query(`SELECT * FROM MealEntry WHERE type='breakfast'`, function (err, res1) {
+
+            mealsBuffer.push(choose(res1, (weeklyBudget / 7) * budgetRatios[0], targetCalories * mealRatios[0], 1, dislikes, preferences));
+            connection.query(`SELECT * FROM MealEntry WHERE type='lunch'`, function (err, res2) {
+              mealsBuffer.push(choose(res2, (weeklyBudget / 7) * budgetRatios[1], targetCalories * mealRatios[1], 1, dislikes, preferences));
+              connection.query(`SELECT * FROM MealEntry WHERE type='dinner'`, function (err, res3) {
+                mealsBuffer.push(choose(res3, (weeklyBudget / 7) * budgetRatios[2], targetCalories * mealRatios[2], 1, dislikes, preferences));
+                numberOfMealsToAdd--;
+                replaceExpiredMeals(meals, mealsBuffer, targetCalories, weeklyBudget, numberOfMealsToAdd, email, connection, callback);
+              });
+            })
           });
-        })
+        });
       });
     }
-  }
-
-  function choose(array)
-  {
-    return array[Math.floor(Math.random()*array.length)];
   }
 
   /**
