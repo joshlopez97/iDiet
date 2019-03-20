@@ -23,12 +23,11 @@
             console.log("trying");
             if (FB != null)
             {
-              clearInterval(loginCheck);
-              addFacebookShareBtns();
               FB.getLoginStatus(function(response) {
                 if (response.status === 'connected') {
                   console.log(response.authResponse.accessToken);
                   $(".fb-login-button").replaceWith("<span class=\"facebook-text\">Connected</span>");
+                  addFacebookShareBtns();
                 }
               });
             }

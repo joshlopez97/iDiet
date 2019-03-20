@@ -4,20 +4,22 @@ function addFacebookShareBtns()
     const email = $("#email").val(),
           meals = $(".meal-wrapper");
     if (meals.length >= 21) {
-      console.log("Adding fb share btns");
       meals.each(function () {
-        let mid = $(this).find(".meal-holder").attr("id").match(/\d+/);
-        let url = encodeURI($(this).find(".meal-title > a").attr("href"));
-        let sharelink = $(`
+        if ($(this).find(".fb-share-btn-holder").length === 0)
+        {
+          let mid = $(this).find(".meal-holder").attr("id").match(/\d+/);
+          let url = encodeURI($(this).find(".meal-title > a").attr("href"));
+          let sharelink = $(`
 <div class="fb-share-btn-holder">
-  <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=${url}" class="fb-xfbml-parse-ignore">Share</a></div>
+  <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small"><a class="fb-share" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=${url}" class="fb-xfbml-parse-ignore">Share</a></div>
 </div>`);
-        sharelink.click(function () {
-          $.get(`/api/like?email=${email}&mid=mid`, function(res){
-            console.log(res);
+          sharelink.click(function () {
+            $.get(`/api/like?email=${email}&mid=${mid}`, function(res){
+              console.log(res);
+            });
           });
-        });
-        $(this).find(".meal-info").append(sharelink);
+          $(this).find(".meal-info").append(sharelink);
+        }
       });
       clearInterval(adder);
     }
