@@ -78,7 +78,7 @@
           BMR = (10 * weight) + (6.25 * height) - (5 * age) - 161
         }
 
-        let calculatedCalories = BMR * 1.3; // BMR * activityMultiplier once implemented
+        let calculatedCalories = BMR * activityMultiplier;
 
         connection.query(`
            UPDATE Account
