@@ -2,52 +2,61 @@
 <html>
 
 <head>
-  <title>Personalize your plan</title>
-  <% include ../partials/head %>
-  <link rel="stylesheet" type="text/css"
-        href="/css/signup.css">
-  <script type="text/javascript"
-          src="js/personalize.js">
-  </script>
+    <title>Personalize your plan</title>
+    <% include ../partials/head %>
+    <link rel="stylesheet" type="text/css"
+          href="/css/signup.css">
+    <script type="text/javascript"
+            src="js/personalize.js">
+    </script>
 </head>
 <body style="background: #fff">
-  <div class="start-wrapper">
-      <div class="start-page-holder">
+<div class="start-wrapper">
+    <div class="start-page-holder">
         <div class="back-btn"></div>
         <img id="logo" class="logo-top-center" src="/img/icon.png">
-      </div>
-      <div class="form-holder">
+    </div>
+    <div class="form-holder">
 
         <form enctype="application/x-www-form-urlencoded" method="post" class="signup-form">
             <div class="login-header">
-              <h3>Personalize your plan</h3>
-              <h5>Now let's create a plan that best fits your needs.</h5>
+                <h3>Personalize your plan</h3>
+                <h5>Now let's create a plan that best fits your needs.</h5>
             </div>
             <div class="fields">
-              <div class="form-field<%-(locals.problems && problems.includes('goalweight'))? ' err-field':''%>">
-                <span class="label">Goal Weight:</span>
-                <input name="goalWeight" id="goalWeight" class="text short" type="tel" style="display:inline-block;" maxlength="4"
-                       value="<%-locals.values?values.goalWeight:''%>">  LBS
-                <% if (locals.problems && problems.includes('goalWeight')) { %>
-                  <span class="errorMsg">Please enter a valid weight.</span>
-                <% } %>
-              </div>
-              <div class="form-field<%-(locals.problems && problems.includes('budget'))? ' err-field':''%>">
-                <span class="label">Weekly Budget for food:</span>
-                <input name="budget" id="budget" class="text short" type="tel"
-                       value="<%-locals.values?values.budget:''%>"
-                       placeholder="$">
-                <% if (locals.problems && problems.includes('budget')) { %>
-                  <span class="errorMsg">Please enter a valid budget.</span>
-                <% } %>
-              </div>
-
+                <div class="form-field<%- (locals.problems && problems.includes('goalweight'))? ' err-field':'' %>">
+                    <span class="label">Goal Weight:</span>
+                    <input name="goalWeight" id="goalWeight" class="text short" type="tel" style="display:inline-block;"
+                           maxlength="4"
+                           value="<%- locals.values?values.goalWeight:'' %>"> LBS
+                    <% if (locals.problems && problems.includes('goalWeight')) { %>
+                        <span class="errorMsg">Please enter a valid weight.</span>
+                    <% } %>
+                </div>
+                <div class="form-field<%- (locals.problems && problems.includes('budget'))? ' err-field':'' %>">
+                    <span class="label">Weekly Budget for food:</span>
+                    <input name="budget" id="budget" class="text short" type="tel"
+                           value="<%- locals.values?values.budget:'' %>"
+                           placeholder="$">
+                    <% if (locals.problems && problems.includes('budget')) { %>
+                        <span class="errorMsg">Please enter a valid budget.</span>
+                    <% } %>
+                </div>
+                <div class="form-field">
+                    <span class="label">Activity Level:</span>
+                    <select name="activityLevel" id="activityLevel" style="color: black;width: 40%;">
+                        <option>Sedentary</option>
+                        <option>Light</option>
+                        <option>Moderate</option>
+                        <option>Very active</option>
+                    </select>
+                </div>
             </div>
             <br>
             <input type="submit" value="Next" style="width: 120px;">
         </form>
-      </div>
-  </div>
+    </div>
+</div>
 
 </body>
 

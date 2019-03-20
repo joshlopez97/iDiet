@@ -29,7 +29,7 @@ connection.connect(function(err){
   if(!err) {
     console.log("Database is connected");
 //     connection.query(`
-// TRUNCATE TABLE Likes;
+// DESCRIBE Account;
 //     `,
 //       (e,r)=>{if(e)throw(e);console.log(r);});
   } else {
@@ -49,13 +49,13 @@ const accountModule = require('./user/account.js'),
 const preferencesModule = require('./user/preferences.js'),
       preferences = preferencesModule.create({"connection":connection});
 
-const mealApi = require('./meals/mealsapi.js'),
+const mealApi = require('./health/mealsapi.js'),
       meals = mealApi.create({"connection": connection,
                               "unirest": unirest,
                               "account": account,
                               "preferences": preferences});
 
-const fitbitApi = require('./meals/fitbit.js'),
+const fitbitApi = require('./health/fitbit.js'),
       fitbit = fitbitApi.create({"connection":connection,
                                  "unirest": unirest,
                                  "account": account});
@@ -274,7 +274,8 @@ router.post('/signup', (req, res) => {
                    "firstname" : req.body.firstname,
                    "height" : req.body.height,
                    "weight" : req.body.weight,
-                   "age" : req.body.age};
+                   "age" : req.body.age,
+                   "gender": req.body.gender};
   const values = Object.assign({}, user_info);
 
   // Verify Sign Up Info
@@ -287,7 +288,7 @@ router.post('/signup', (req, res) => {
   }
   // Sign up info invalid, display error on signup page
   else {
-    return res.render('pages/signup', {"problems":problems, "values":user_info});
+    return res.render('pages/signup', {"problems":problems, "values":values});
   }
 });
 
@@ -299,8 +300,10 @@ router.post('/personalize', (req, res) => {
                    "height" : req.query.height,
                    "weight" : req.query.weight,
                    "age" : req.query.age,
+                   "gender" : req.query.gender,
                    "budget" : req.body.budget,
-                   "goalWeight" : req.body.goalWeight};
+                   "goalWeight" : req.body.goalWeight,
+                   "activityLevel" : req.body.activityLevel};
   const values = Object.assign({}, user_info);
   console.log(user_info);
 
@@ -316,7 +319,7 @@ router.post('/personalize', (req, res) => {
   }
   else
   {
-    return res.render('pages/personalize', {"problems":problems, "values":user_info});
+    return res.render('pages/personalize', {"problems":problems, "values":values});
   }
 });
 

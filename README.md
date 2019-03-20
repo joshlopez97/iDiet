@@ -43,9 +43,12 @@ iDiet Accounts:
 - Age: User's age (will be replaced with date of birth)
 - Allergies: String containing comma separated list of allergies to avoid in diet plan
 - GoalWeight: int containing the weight that user wishes to be at
+- Gender: string containing "male" or "female"
+- ActivityLevel: int indicating level of physical activity indicated by user
 - WeeklyBudget: int containing amount of money user wishes to spend on food
 - DailyCalories: int containing amount of calories user should consume
 - FitBitConnected: bit indicating if FitBit is connected
+- FacebookConnected: bit indicating if Facebook is connected
 ```
 CREATE TABLE Account (
   Email varchar(255) UNIQUE NOT NULL,
@@ -56,9 +59,12 @@ CREATE TABLE Account (
   Age int NOT NULL,
   Allergies varchar(255),
   GoalWeight int NOT NULL,
+  Gender varchar(10) NOT NULL,
+  ActivityLevel int NOT NULL,
   WeeklyBudget int NOT NULL,
   DailyCalories int NOT NULL,
-  FitBitConnected bit NOT NULL
+  FitBitConnected bit NOT NULL,
+  FacebookConnected bit NOT NULL  
 );
 ```
 Cached Meal Metadata from Spoonacular Nutrition API:

@@ -145,7 +145,7 @@
   Preferences.prototype.getLikeDislikeData = function(email, callback)
   {
     let conn = this.connection;
-    conn.query(`SELECT mid FROM Disikes WHERE email = ?`, [email], function(err, dislike_data){
+    conn.query(`SELECT mid FROM Dislikes WHERE email = ?`, [email], function(err, dislike_data){
       if (err) throw err;
       conn.query(`SELECT mid FROM Likes WHERE email = ?`, [email], function(err, like_data){
         if (err) throw err;
