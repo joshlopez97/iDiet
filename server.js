@@ -211,6 +211,8 @@ router.get('/api/like', (req, res) => {
   if (typeof email !== 'undefined' && typeof mid !== 'undefined')
   {
     preferences.likeMeal(email, mid, function(err, resp){
+      if (err)
+        throw err;
       console.log(resp);
       return res.json({"result": "success"});
     });

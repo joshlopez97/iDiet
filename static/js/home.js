@@ -1,3 +1,29 @@
+function addFacebookShareBtns()
+{
+  let adder = window.setInterval(function() {
+    const email = $("#email").val(),
+          meals = $(".meal-wrapper");
+    if (meals.length >= 21) {
+      console.log("Adding fb share btns");
+      meals.each(function () {
+        let mid = $(this).find(".meal-holder").attr("id").match(/\d+/);
+        let url = encodeURI($(this).find(".meal-title > a").attr("href"));
+        let sharelink = $(`
+<div class="fb-share-btn-holder">
+  <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=${url}" class="fb-xfbml-parse-ignore">Share</a></div>
+</div>`);
+        sharelink.click(function () {
+          $.get(`/api/like?email=${email}&mid=mid`, function(res){
+            console.log(res);
+          });
+        });
+        $(this).find(".meal-info").append(sharelink);
+      });
+      clearInterval(adder);
+    }
+  }, 100);
+}
+
 $(document).ready(function(){
 
   // Ensure heights of rows are resized even if elements load slowly

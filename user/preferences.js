@@ -102,12 +102,15 @@
     {
       conn.query(`SELECT * FROM MealEntry WHERE mid = ?`, [mid], function(err, data)
       {
-        if (err || data.length === 0) throw err;
-        let newPreferences = applyLike(preferences, data[0]);
-        console.log(newPreferences);
-        conn.query(`INSERT INTO FoodPreferences SET ?`, newPreferences, (error, results, fields) => {
-          if (error) throw error;
-        });
+        if (!err && data.length !== 0)
+        {
+          let newPreferences = applyLike(preferences, data[0]);
+          console.log(newPreferences);
+          conn.query(`INSERT INTO FoodPreferences SET ?`, newPreferences, (error, results, fields) => {
+            if (error)
+              console.log(error);
+          });
+        }
       });
 
     });
@@ -127,11 +130,11 @@
     {
       conn.query(`SELECT * FROM MealEntry WHERE mid = ?`, [mid], function(err, data)
       {
-        if (err || data.length === 0) throw err;
+        if (err || data.length === 0) console.log(err);
         let newPreferences = applyDislike(preferences, data[0]);
         console.log(newPreferences);
         conn.query(`INSERT INTO FoodPreferences SET ?`, newPreferences, (err) => {
-          if (err) throw err;
+          if (err) console.log(err);
         });
       });
 
@@ -146,9 +149,11 @@
   {
     let conn = this.connection;
     conn.query(`SELECT mid FROM Dislikes WHERE email = ?`, [email], function(err, dislike_data){
-      if (err) throw err;
+      if (err)
+        console.log(err);
       conn.query(`SELECT mid FROM Likes WHERE email = ?`, [email], function(err, like_data){
-        if (err) throw err;
+        if (err)
+          console.log(err);
         callback(like_data, dislike_data);
       });
     });
@@ -158,7 +163,8 @@
   {
     this.connection.query(`SELECT * FROM FoodPreferences WHERE email = ?`, [email], function(err, resp)
     {
-      if (err) throw err;
+      if (err)
+        console.log(err);
       let preferences;
       if (resp.length === 0) {
         preferences = getDefaultPreferences(email);
