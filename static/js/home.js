@@ -180,6 +180,7 @@ $(document).ready(function(){
 
   function fixHeights()
   {
+    $(".meals").css("top", $(".header-wrapper").outerHeight() + 50 + "px");
     for (let row of $(".meal-row"))
     {
       setHeight($(row));

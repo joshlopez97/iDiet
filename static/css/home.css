@@ -12,6 +12,12 @@
   margin-bottom: 6px;
 }
 
+.homepage-subheader
+{
+  font-size: 15pt;
+  margin-top: 15px;
+}
+
 .meal-wrapper
 {
   display:inline-block;
@@ -79,6 +85,18 @@
 {
   color: #39bd62;
   font-weight: bold;
+}
+
+.fitbit-text
+{
+  font-weight: bold;
+  color:#4ab0b9;
+}
+
+.facebook-text
+{
+  font-weight: bold;
+  color:#4167b1;
 }
 
 .dark-green-bold

@@ -13,6 +13,31 @@
 <% include ../partials/header %>
 <div class="header-wrapper">
     <h1 class="homepage-header">My Diet Plan</h1>
+
+    <!-- Facebook SDK -->
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.2&appId=299255244104196&autoLogAppEvents=1">
+    </script>
+    <script>
+      let loginCheck = setInterval(function(){
+            console.log("trying");
+            if (FB == null)
+              console.log("fb is null");
+            else
+            {
+              FB.getLoginStatus(function(response) {
+                if (response.status === 'connected') {
+                  console.log(response.authResponse.accessToken);
+                  $(".fb-login-button").replaceWith("<span class=\"facebook-text\">Connected</span>");
+                }
+                else
+                  console.log("user not logged in");
+              });
+            }
+          }, 1000);
+    </script>
+
+    <!-- Account Info -->
     <% if (locals.acc) { %>
     <span class="account-info">
         <div class="info-entry">
@@ -21,19 +46,27 @@
         <div class="info-entry">
             <span class="info-label">Daily Recommended Calories: </span><span class="dark-green-bold"><%-acc.DailyCalories%></span>
         </div>
-        <% if (!!acc.FitBitConnected) { %>
+        <div class="homepage-subheader">Connect Accounts</div>
         <div class="info-entry">
-            <span class="dark-green-bold">FitBit is Connected</span>
+            <span>Fitbit:  </span>
+            <% if (!!acc.FitBitConnected) { %>
+                <span class="fitbit-text">Connected</span>
+            <% } else { %>
+                <a class="fitbit-text" href="https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=22DK39&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2F&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=604800">Connect FitBit</a>
+            <% } %>
         </div>
-        <% } else { %>
         <div class="info-entry">
-            <a href="https://www.fitbit.com/oauth2/authorize?response_type=code&client_id=22DK39&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2F&scope=activity%20heartrate%20location%20nutrition%20profile%20settings%20sleep%20social%20weight&expires_in=604800">Connect FitBit</a>
+            <span>Facebook:  </span>
+            <% if (!!acc.FacebookConnected) { %>
+                <span class="facebook-text">Connected</span>
+            <% } else { %>
+                <div class="fb-login-button" data-size="small" data-button-type="continue_with" data-auto-logout-link="false" data-use-continue-as="true"></div>
+            <% } %>
         </div>
-        <% } %>
+
     </span>
     <% } %>
 </div>
-<!--This section is populated by client-side JS in /static/js/home.js-->
 <div class="meals">
 </div>
 <input id="email" type="hidden" value="<%- email %>">
