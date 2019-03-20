@@ -21,17 +21,14 @@
     <script>
       let loginCheck = setInterval(function(){
             console.log("trying");
-            if (FB == null)
-              console.log("fb is null");
-            else
+            if (FB != null)
             {
               FB.getLoginStatus(function(response) {
                 if (response.status === 'connected') {
                   console.log(response.authResponse.accessToken);
                   $(".fb-login-button").replaceWith("<span class=\"facebook-text\">Connected</span>");
+                  clearInterval(loginCheck);
                 }
-                else
-                  console.log("user not logged in");
               });
             }
           }, 1000);
@@ -60,7 +57,7 @@
             <% if (!!acc.FacebookConnected) { %>
                 <span class="facebook-text">Connected</span>
             <% } else { %>
-                <div class="fb-login-button" data-size="small" data-button-type="continue_with" data-auto-logout-link="false" data-use-continue-as="true"></div>
+                <div class="fb-login-button" data-size="small" data-button-type="continue_with" data-auto-logout-link="false" data-use-continue-as="true" data-scope="email, user_likes, user_friends, user_posts"></div>
             <% } %>
         </div>
 

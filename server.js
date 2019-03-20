@@ -49,13 +49,13 @@ const accountModule = require('./user/account.js'),
 const preferencesModule = require('./user/preferences.js'),
       preferences = preferencesModule.create({"connection":connection});
 
-const mealApi = require('./apis/mealsapi.js'),
+const mealApi = require('./meals/mealsapi.js'),
       meals = mealApi.create({"connection": connection,
                               "unirest": unirest,
                               "account": account,
                               "preferences": preferences});
 
-const fitbitApi = require('./apis/fitbit.js'),
+const fitbitApi = require('./meals/fitbit.js'),
       fitbit = fitbitApi.create({"connection":connection,
                                  "unirest": unirest,
                                  "account": account});

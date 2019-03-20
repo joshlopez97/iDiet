@@ -1,6 +1,6 @@
 /**
  * This module is responsible for modifying, retrieving, and analyzing user LIKE
- * and DISLIKE data.
+ * and DISLIKE data, as well as calculating Dietary Preferences based on this data.
  */
 (function() {
   const DEFAULT_CATEGORY_WEIGHT = 1.0;

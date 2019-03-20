@@ -14,6 +14,25 @@ To set up iDiet for local development:
 `node server.js`  
 and then go to http://localhost:5000 to view the application.
 
+## Project Structure
+```
+.  
+├── health  
+|   ├── fitbit.js          // Connects to FitBit API
+|   └── mealsapi.js        // Creates mealplans
+├── user  
+|   ├── account.js         // Manages account info
+|   └── preferences.js     // Manages dietary preferences
+├── static                 // Static files
+├── views                  // HTML
+└── server.js              // Server Code
+```
+<b>server.js</b>: Contains all web application routes. Installs dependencies into all other modules.  
+<b>fitbit.js</b>: Makes calls to FitBit API and stores FitBit related data along with each user's FitBit access token.  
+<b>mealsapi.js</b>: Creates meal plan for user using cached data from Spoonacular Nutrition API. Each mealplan factors in information on user dietary preferences, calculated health state information, recommended calories, and weekly budget for food.  
+<b>account.js</b>: Handles account creation, login, and overall account data management.  
+<b>preferences.js</b>: Handles "liking" and "disliking" of foods and calculation of dietary preferences for each user.
+
 ## MySQL Database Schema
 iDiet Accounts:
 - Email: User's email used to sign in
