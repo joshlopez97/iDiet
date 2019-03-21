@@ -53,7 +53,8 @@ const mealApi = require('./health/mealsapi.js'),
       meals = mealApi.create({"connection": connection,
                               "unirest": unirest,
                               "account": account,
-                              "preferences": preferences});
+                              "preferences": preferences,
+                              "mysql": mysql});
 
 const fitbitApi = require('./health/fitbit.js'),
       fitbit = fitbitApi.create({"connection":connection,
@@ -247,15 +248,19 @@ router.get('/api/dislike', (req, res) => {
 
 router.get('/api/search', (req, res) => {
   const query  = req.query.q;
+  console.log(query);
   res.setHeader('Content-Type', 'application/json');
   if (typeof query !== 'undefined')
   {
+    console.log('searching')
     meals.search(query, function(results){
+      console.log(results);
       return res.json({"result": "success", "data": results})
     });
   }
   else
   {
+    console.log("error");
     return res.json({"result": "error"});
   }
 });
@@ -349,6 +354,16 @@ router.get('/profile', (req, res) => {
   account.get_account_info(req.session.user.id, function(info){
     return res.render('pages/profile', {"info":info});
   });
+});
+
+router.post('/profile', (req, res) => {
+  account.get_account_info(req.session.user.id, function(info){
+    return res.render('pages/profile', {"info":info});
+  });
+});
+
+router.get('/search', (req, res) => {
+  return res.render('pages/search');
 });
 
 

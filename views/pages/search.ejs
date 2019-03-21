@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+    <% include ../partials/head %>
+    <link rel="stylesheet" type="text/css"
+          href="/css/profile.css">
+</head>
+<script>
+    $(document).ready(function(){
+      jQuery.ui.autocomplete.prototype._resizeMenu = function () {
+        var ul = this.menu.element;
+        ul.outerWidth(this.element.outerWidth());
+      }
+      $(".searchbar").autocomplete({
+        source: function(query, response){
+          console.log(query);
+          const COUNT = 5;
+          let words = query.term.toLowerCase().split(" ");
+          if (words.length > 0)
+          {
+            let results = [];
+            $.get("/api/search?q=" + query.term, function(resp){
+              let results = [],
+                    backup = [];
+              for (let key in resp.data)
+              {
+                let food = resp.data[key],
+                    t = food.title.toLowerCase();
+                if (t.startsWith(words[0]))
+                    results.push({"label": food.title, "link": food.slink});
+                else
+                  backup.push({"label": food.title, "link": food.slink})
+                if (results.length === COUNT)
+                  break;
+              }
+              if (results.length < COUNT)
+                results = results.concat(backup);
+              console.log(results);
+              response(results.slice(0, COUNT));
+            });
+          }
+          else
+            response([]);
+
+        },
+        select: function(e, ui) {
+          window.location.href = ui.item.link;
+        }
+      });
+    });
+</script>
+<style>
+    .searchbar
+    {
+        border-radius:10px;
+        width: 80%;
+        border: 2px #d0d0d0 solid;
+    }
+</style>
+<body>
+<% include ../partials/header %>
+<div style="margin-top: 67px; display: inline-block; width:100%;text-align: center;">
+    <h3 style="margin-bottom: 8px;position:relative;">Search For Meals</h3>
+    <form method="post">
+        <input type="text" class="searchbar">
+    </form>
+
+
+</div>
+</body>
+
+</html>

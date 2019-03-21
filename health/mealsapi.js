@@ -140,24 +140,30 @@
 
   MealsApi.prototype.search = function(query, callback)
   {
-    this.connection.query(`
-      SELECT *
-      FROM MealEntry
-      WHERE
-      (
-          title like '%?%'
-      )
-    `, [query], function(err, results){
-      if (err)
+    let mysql = this.dependencies.mysql;
+    let words = query.split(" ");
+    if (words.length > 0)
+    {
+      let condition_str = "title LIKE " + mysql.escape('%' + words[0] + '%');
+      for (let i = 1; i < words.length; ++i)
       {
-        console.log(err);
-        return [];
+        condition_str += "OR title LIKE " + mysql.escape('%' + words[i] + '%');
       }
-      else
-      {
-        return results;
-      }
-    });
+      this.dependencies.connection.query(`SELECT * FROM MealEntry WHERE ${condition_str};`,
+        function(err, results){
+          if (err)
+          {
+            console.log(err);
+            return callback([]);
+          }
+          else
+          {
+            return callback(results);
+          }
+        });
+    }
+    else
+      return callback([]);
   };
 
   MealsApi.prototype.replaceMeal = function(email, mid, mindex, callback)
