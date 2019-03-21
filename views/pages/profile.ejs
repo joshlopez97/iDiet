@@ -1,71 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Profile</title>
-  <% include ../partials/head %>
-  <link rel="stylesheet" type="text/css" 
-  href="/css/profile.css">
+    <title>Profile</title>
+    <% include ../partials/head %>
+    <link rel="stylesheet" type="text/css"
+          href="/css/profile.css">
 </head>
 <body>
-  <% include ../partials/header %>
-  <div style="margin-top: 67px; display: inline-block; width:100%;text-align: center;">
-		<h3 style="margin-bottom: 8px;position:relative;">My Profile</h3>
+<% include ../partials/header %>
+<div style="margin-top: 67px; display: inline-block; width:100%;text-align: center;">
+    <h3 style="margin-bottom: 8px;position:relative;">My Profile</h3>
     <div class="info-holder">
-      <h4 style="margin-bottom: 8px;">My Information</h4>
-      <div class="entry">
-        <div class="key">Username</div>
-        <div class="value" name="username"><%= username %></div>
-      </div>
-      <div class="entry">
-  		  <div class="key">Name</div>
-  		  <div class="value" name="name"><%= name %> <%= lname %></div>
-      </div>
-      <div class="entry">
-        <div class="key">Height</div>
-        <div class="value" name="height"><%= height %></div>
-      </div>
-      <div class="entry">
-        <div class="key">Weight</div>
-        <div class="value" name="weight"><%= weight %></div>
-      </div>
-      <div class="entry">
-        <div class="key">Age</div>
-        <div class="value" name="age"><%= age %></div>
-      </div>
-      <div class="entry">
-        <div class="key">Email</div>
-        <div class="value"><%= email %></div>
-      </div>
-      <div class="entry">
-        <div class="key">Phone Number</div>
-        <div class="value"><%= phone %></div>
-      </div>
-  	</div>
+        <h4 style="margin-bottom: 8px;">My Information</h4>
+        <div class="entry">
+            <div class="key">Email</div>
+            <div class="value" name="username"><%= info.Email %></div>
+        </div>
+        <div class="entry">
+            <div class="key">Name</div>
+            <div class="value" name="name"><%= info.FirstName %></div>
+        </div>
+        <div class="entry">
+            <div class="key">Height</div>
+            <div class="value" name="height"><%= Math.floor(info.Height / 12) + '\' ' + info.Height % 12  %></div>
+        </div>
+        <div class="entry">
+            <div class="key">Weight</div>
+            <div class="value" name="weight"><%= info.Weight %></div>
+        </div>
+        <div class="entry">
+            <div class="key">Goal Weight</div>
+            <div class="value" name="goalweight"><%= info.GoalWeight %></div>
+        </div>
+        <div class="entry">
+            <div class="key">Age</div>
+            <div class="value" name="age"><%= info.Age %></div>
+        </div>
+        <div class="entry">
+            <div class="key">Target Calories</div>
+            <div class="value" name="dailycalories"><%= info.DailyCalories %></div>
+        </div>
+        <div class="entry">
+            <div class="key">Weekly Budget</div>
+            <div class="value" name="budget">$<%= info.WeeklyBudget %></div>
+        </div>
+    </div>
     <div class="info-holder">
-      <h4 style="margin-bottom: 8px;">Change Password</h4>
-      <form method="post">
-        <div class="entry">
-          <div class="key skipline">Current Password</div>
-          <div class="value">
-            <input class="text" type="password" name="current">
-          </div>
-        </div>
-        <div class="entry">
-          <div class="key skipline">New Password</div>
-          <div class="value">
-            <input class="text" type="password" name="new">
-          </div>
-        </div>
-        <div class="entry">
-          <div class="key skipline">Confirm New Password</div>
-          <div class="value">
-            <input class="text" type="password" name="confirmnew">
-          </div>
-        </div>
-      </form>
+        <h4 style="margin-bottom: 8px;">Change Password</h4>
+        <form method="post">
+            <div class="entry">
+                <div class="key skipline">Current Password</div>
+                <div class="value">
+                    <input class="text" type="password" name="current">
+                </div>
+            </div>
+            <div class="entry">
+                <div class="key skipline">New Password</div>
+                <div class="value">
+                    <input class="text" type="password" name="new">
+                </div>
+            </div>
+            <div class="entry">
+                <div class="key skipline">Confirm New Password</div>
+                <div class="value">
+                    <input class="text" type="password" name="confirmnew">
+                </div>
+            </div>
+            <button style="margin-top:20px" type="submit">Submit</button>
+
+        </form>
     </div>
 
-	</div>
+</div>
 </body>
 
 </html>

@@ -138,6 +138,28 @@
     }
   }
 
+  MealsApi.prototype.search = function(query, callback)
+  {
+    this.connection.query(`
+      SELECT *
+      FROM MealEntry
+      WHERE
+      (
+          title like '%?%'
+      )
+    `, [query], function(err, results){
+      if (err)
+      {
+        console.log(err);
+        return [];
+      }
+      else
+      {
+        return results;
+      }
+    });
+  };
+
   MealsApi.prototype.replaceMeal = function(email, mid, mindex, callback)
   {
     let connection = this.dependencies.connection,

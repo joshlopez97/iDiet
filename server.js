@@ -245,6 +245,21 @@ router.get('/api/dislike', (req, res) => {
   }
 });
 
+router.get('/api/search', (req, res) => {
+  const query  = req.query.q;
+  res.setHeader('Content-Type', 'application/json');
+  if (typeof query !== 'undefined')
+  {
+    meals.search(query, function(results){
+      return res.json({"result": "success", "data": results})
+    });
+  }
+  else
+  {
+    return res.json({"result": "error"});
+  }
+});
+
 // Start page
 router.get('/start', (req, res) => {
   return res.render('pages/start', {'action':req.query.action, 'error':req.query.error});
@@ -331,7 +346,9 @@ router.get('/personalize', (req, res) => {
 
 // Profile Page
 router.get('/profile', (req, res) => {
-  return res.render('pages/profile');
+  account.get_account_info(req.session.user.id, function(info){
+    return res.render('pages/profile', {"info":info});
+  });
 });
 
 
