@@ -83,37 +83,39 @@ $(document).ready(function(){
       });
 
       // popup current meal
-      let hr = new Date().getHours(),
+      setTimeout(function(){
+        let hr = new Date().getHours(),
           meals = $(".meal-holder"),
           dtitle,
           meal;
-      console.log(hr)
-      if (hr >= 6 && hr <= 10)
-      {
-        dtitle = "It's Breakfast Time!";
-        meal = $(meals[0]).clone();
-      }
-      else if (hr >= 12 && hr <= 15)
-      {
-        dtitle = "It's Lunch Time!";
-        meal = $(meals[1]).clone();
-      }
-      else if (hr >= 17 && hr <= 21)
-      {
-        dtitle = "It's Dinner Time!";
-        meal = $(meals[2]).clone();
-      }
-      else
-        return;
+        console.log(hr)
+        if (hr >= 6 && hr <= 10)
+        {
+          dtitle = "It's Breakfast Time!";
+          meal = $(meals[0]).clone();
+        }
+        else if (hr >= 12 && hr <= 15)
+        {
+          dtitle = "It's Lunch Time!";
+          meal = $(meals[1]).clone();
+        }
+        else if (hr >= 17 && hr <= 21)
+        {
+          dtitle = "It's Dinner Time!";
+          meal = $(meals[2]).clone();
+        }
+        else
+          return;
 
 
 
-      let dbox = $("#dialog");
-      dbox.attr("title", dtitle);
-      dbox.append(meal);
-      dbox.dialog({"autoResize": true});
-      dbox.height(meal.outerHeight());
-      $(".ui-dialog").css({"top": "50%", "left": "50%", "transform": "translate(-50%, -50%)"})
+        let dbox = $("#dialog");
+        dbox.attr("title", dtitle);
+        dbox.append(meal);
+        dbox.dialog({"autoResize": true, "show": "fadeIn"});
+        dbox.height(meal.outerHeight());
+        $(".ui-dialog").css({"top": "50%", "left": "50%", "transform": "translate(-50%, -50%)"})
+      }, 5000);
     });
   }
 
