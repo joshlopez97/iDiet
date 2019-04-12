@@ -2,7 +2,7 @@
 ## Overview
 iDiet is a mobile web application that prescribes users customizable meal plans based on health goals, dietary preferences/restrictions, and weekly budget for food.
 
-![iDiet](https://i.imgur.com/5zmIcAR.png)
+![iDiet](https://i.imgur.com/5zmIcAR.png) ![iDiet](https://i.imgur.com/YAcbA51.png)
 
 ## Development
 To set up iDiet for local development:
