@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/joshlopez97/iDiet.svg?branch=master)](https://travis-ci.org/joshlopez97/iDiet)
+[![Dependency Status](https://david-dm.org/joshlopez97/iDiet.svg)](https://david-dm.org/joshlopez97/iDiet)
 <br />
 # iDiet
 ## Overview
