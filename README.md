@@ -1,4 +1,6 @@
 # iDiet
+[![Build Status](https://travis-ci.org/joshlopez97/iDiet.svg?branch=master)](https://travis-ci.org/joshlopez97/iDiet)
+<br />
 ## Overview
 iDiet is a mobile web application that prescribes users customizable meal plans based on health goals, dietary preferences/restrictions, and weekly budget for food.
 
